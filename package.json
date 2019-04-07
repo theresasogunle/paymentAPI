@@ -1,11 +1,11 @@
 {
-  "name": "karigoinsurapi",
+  "name": "paymentappapi",
   "version": "1.0.0",
-  "description": "KarigoInsur API",
+  "description": "Payment App API",
   "main": "index.js",
   "scripts": {
     "test": "env-cmd ./test.env jest",
-    "lint":"tslint -t stylish src/**/*.ts",
+    "lint": "tslint -t stylish src/**/*.ts",
     "test:watch": "env-cmd ./test.env jest --watchAll",
     "start": "env-cmd .env ts-node src/index.ts",
     "dev": "env-cmd .env nodemon --ext ts,graphql,yml,env -w ./src -x npm start",
