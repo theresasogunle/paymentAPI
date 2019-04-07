@@ -1,0 +1,24 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "linterOptions": {
+        "exclude": [
+            "src/schema/generated"
+        ]
+    },
+    "jsRules": {},
+    "rules": {
+        "object-literal-shorthand": false,
+        "object-literal-sort-keys": false,
+        "trailing-comma": false,
+        "no-var-requires": false,
+        "interface-name": false,
+        "no-console": false,
+        "prefer-const": false,
+        "no-empty": false
+
+    },
+    "rulesDirectory": []
+}

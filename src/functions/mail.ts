@@ -14,7 +14,7 @@ interface Message {
 
 export default function mail(input: Message) {
   const { user, message, subject } = input;
-  var data = {
+  const data = {
     from: "KarigoInsur <noreply@deatt.com>",
     to: user.email,
     subject: subject,
@@ -23,7 +23,7 @@ export default function mail(input: Message) {
   if (process.env.ENV.toLowerCase() === "test") {
     return;
   }
-  mailgun.messages().send(data, function(error, body) {
+  mailgun.messages().send(data, (error, body) => {
     if (error) {
       console.log(error);
     }
