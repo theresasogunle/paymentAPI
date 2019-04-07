@@ -1,0 +1,14 @@
+# import User, SignUpInput, SignUpData, LoginUserData, EmailInput, VerifyUserInput, LoginInput, VerificationDataInput, ChangePasswordInput, UpdatePasswordInput from './user.graphql'
+type Query {
+  users: [User]
+}
+type Mutation {
+  # user mutations
+  signUp(data: SignUpInput!): SignUpData!
+  verifyUser(data: VerifyUserInput!): LoginUserData
+  resendVerificationCode(data: EmailInput!): SignUpData!
+  loginUser(data: LoginInput!): LoginUserData
+  forgotPassword(data: EmailInput!): SignUpData!
+  resetPassword(data: ChangePasswordInput!): LoginUserData!
+  updatePassword(data: UpdatePasswordInput!): LoginUserData!
+}

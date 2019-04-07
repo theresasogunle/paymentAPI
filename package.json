@@ -1,0 +1,39 @@
+{
+  "name": "karigoinsurapi",
+  "version": "1.0.0",
+  "description": "KarigoInsur API",
+  "main": "index.js",
+  "scripts": {
+    "test": "env-cmd ./test.env jest",
+    "test:watch": "env-cmd ./test.env jest --watchAll",
+    "start": "env-cmd .env ts-node src/index.ts",
+    "dev": "env-cmd .env nodemon --ext ts,graphql,yml,env -w ./src -x npm start",
+    "prisma-deploy": "npm run prisma-deploy:test && npm run prisma-deploy:prod",
+    "prisma-deploy:test": "prisma deploy -e test.env",
+    "prisma-deploy:prod": "prisma deploy"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/jsonwebtoken": "^8.3.2",
+    "@types/lodash": "^4.14.123",
+    "bcryptjs": "^2.4.3",
+    "dateformat": "^3.0.3",
+    "dotenv": "^7.0.0",
+    "graphql-import": "^0.7.1",
+    "graphql-yoga": "^1.17.4",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.11",
+    "mailgun-js": "^0.22.0",
+    "prisma-client-lib": "^1.29.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.11",
+    "@types/node": "^11.13.0",
+    "env-cmd": "^8.0.2",
+    "jest": "^24.7.0",
+    "ts-jest": "^24.0.1",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.4.1"
+  }
+}

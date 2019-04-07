@@ -1,0 +1,72 @@
+# data
+
+type User {
+  id: ID!
+  firstname: String!
+  middlename: String!
+  lastname: String!
+  DOB: String!
+  email: String!
+  phonenumber: String!
+  gender: Gender!
+  verified: Boolean!
+  deleted: Boolean!
+  deletedAt: String
+  createdAt: String!
+  updatedAt: String!
+}
+
+type SignUpData {
+  user: User!
+  status: String!
+  message: String!
+}
+
+type LoginUserData {
+  user: User!
+  token: String!
+}
+
+#inputs
+
+input SignUpInput {
+  firstname: String!
+  middlename: String!
+  lastname: String!
+  DOB: String!
+  email: String!
+  phonenumber: String!
+  password: String!
+  gender: Gender!
+}
+
+input VerifyUserInput {
+  email: String!
+  code: Int!
+}
+
+input ChangePasswordInput {
+  email: String!
+  code: Int!
+  password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input EmailInput {
+  email: String!
+}
+
+input UpdatePasswordInput {
+  oldPassword: String!
+  newPassword: String!
+}
+
+#enums
+enum Gender {
+  Male,
+  Female
+}

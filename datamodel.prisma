@@ -1,0 +1,48 @@
+type User {
+  id: ID! @unique
+  firstname: String!
+  middlename: String!
+  lastname: String!
+  DOB: DateTime!
+  email: String! @unique
+  phonenumber: String! @unique
+  password: String!
+  gender: Gender!
+  verified: Boolean! @default(value: "false")
+  deleted: Boolean! @default(value: "false")
+  deletedAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  #relationships
+  verificationCode: VerificationCode
+  passwordResetCode: PasswordResetCode
+}
+
+# verification code to verify user
+type VerificationCode {
+  id: ID! @unique
+  code: Int!
+  deleted: Boolean! @default(value: "false")
+  deletedAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  #relationships
+  user: User!
+}
+
+# password reset code to reset users password
+type PasswordResetCode {
+  id: ID! @unique
+  code: Int!
+  deleted: Boolean! @default(value: "false")
+  deletedAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  #relationships
+  user: User!
+}
+
+enum Gender {
+  Male,
+  Female
+}

@@ -1,0 +1,10 @@
+endpoint: ${env:PRISMA_ENDPOINT}
+datamodel: datamodel.prisma
+
+generate:
+  - generator: typescript-client
+    output: ./src/schema/generated/prisma-client/
+hooks:
+  post-deploy:
+    - prisma generate
+    - graphql get-schema --project db
