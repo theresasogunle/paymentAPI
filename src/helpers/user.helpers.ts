@@ -9,7 +9,7 @@ require("dotenv").config();
 
 export async function createUser(data: User) {
   // extract the date of birth and password for modifications
-  let { DOB, password, email } = data;
+  let { DOB, password, email, transaction_pin } = data;
 
   // check if password is greater than 7 characters
   if (password.length < 8) {
@@ -23,9 +23,15 @@ export async function createUser(data: User) {
   formatDate = new Date(formatDate);
   // hash password
   password = bcrypt.hashSync(password, salt);
+  // hash transaction pin
+  transaction_pin = bcrypt.hashSync(transaction_pin, salt);
+
+  // add it back to the data object
   data.DOB = formatDate;
   data.password = password;
+  data.transaction_pin = transaction_pin;
   const user = await prisma.createUser(data);
+
   return sendVerificationCode(user.email);
 }
 
@@ -78,7 +84,7 @@ export async function sendVerificationCode(email: string, code?: number) {
     await mail({
       user,
       message: `Hello ${
-        user.firstname
+        user.fullname
       }. Welcome to the future of Insurance. Enter this ${
         newVerificationCode.code
       }, to verify your account`,
@@ -122,6 +128,15 @@ export async function verifyUser(email: string, code?: number) {
         },
         data: {
           verified: true
+        }
+      });
+      // create Wallet
+      await prisma.createWallet({
+        amount: 0,
+        user: {
+          connect: {
+            email
+          }
         }
       });
 
@@ -236,7 +251,7 @@ export async function sendPasswordResetCode(email: string, code?: number) {
     await mail({
       user,
       message: `Hi ${
-        user.firstname
+        user.fullname
       }. Use this code: ${code} to reset your password`,
       subject: "KarigoInsur Password Reset"
     });
@@ -353,8 +368,7 @@ export async function updatePassword(
 
 export async function updateProfile(
   token: string,
-  firstname: string,
-  lastname: string,
+  fullname: string,
   gender: Gender
 ) {
   const { id, email, user } = verifyToken(token) as any;
@@ -370,8 +384,7 @@ export async function updateProfile(
         email
       },
       data: {
-        firstname,
-        lastname,
+        fullname,
         gender
       }
     });

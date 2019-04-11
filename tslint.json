@@ -5,7 +5,7 @@
     ],
     "linterOptions": {
         "exclude": [
-            "src/schema/generated"
+            "src/schema/generated/prisma-client/*.ts"
         ]
     },
     "jsRules": {},
@@ -17,7 +17,9 @@
         "interface-name": false,
         "no-console": false,
         "prefer-const": false,
-        "no-empty": false
+        "no-empty": false,
+        "arrow-parens": false,
+        "no-shadowed-variable": false
 
     },
     "rulesDirectory": []

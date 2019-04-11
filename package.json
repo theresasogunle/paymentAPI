@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "env-cmd ./test.env jest",
-    "lint": "tslint -t stylish src/**/*.ts",
+    "lint": "tslint -e .tslintignore -t stylish --project tsconfig.json",
     "test:watch": "env-cmd ./test.env jest --watchAll",
     "start": "env-cmd .env ts-node src/index.ts",
     "dev": "env-cmd .env nodemon --ext ts,graphql,yml,env -w ./src -x npm start",
@@ -28,6 +28,9 @@
     "mailgun-js": "^0.22.0",
     "prisma-client-lib": "^1.29.2"
   },
+  "tslintIgnore": [
+    "**/src/schema/**"
+  ],
   "devDependencies": {
     "@types/jest": "^24.0.11",
     "@types/node": "^11.13.0",
