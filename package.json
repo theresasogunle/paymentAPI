@@ -4,7 +4,7 @@
   "description": "Payment App API",
   "main": "index.js",
   "scripts": {
-    "test": "env-cmd ./test.env jest",
+    "test": "env-cmd ./test.env jest --runInBand",
     "lint": "tslint -e .tslintignore -t stylish --project tsconfig.json",
     "test:watch": "env-cmd ./test.env jest --watchAll",
     "start": "env-cmd .env ts-node src/index.ts",

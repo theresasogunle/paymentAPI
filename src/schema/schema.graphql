@@ -1,4 +1,5 @@
 # import User, SignUpInput, SignUpData, LoginUserData, EmailInput, VerifyUserInput, LoginInput, VerificationDataInput, ChangePasswordInput, UpdatePasswordInput, UpdateProfileInput from './user.graphql'
+#import WalletData,WalletTransferInput,WalletTransactionInput from './wallet.graphql'
 type Query {
   users: [User]
 }
@@ -12,4 +13,8 @@ type Mutation {
   resetPassword(data: ChangePasswordInput!): LoginUserData!
   updatePassword(data: UpdatePasswordInput!): LoginUserData!
   updateProfile(data: UpdateProfileInput): LoginUserData!
+
+  #wallet mutations
+  initiateWalletTransaction(data: WalletTransactionInput): WalletData
+  walletTransfer(data: WalletTransferInput): WalletData
 }

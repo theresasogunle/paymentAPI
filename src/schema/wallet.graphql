@@ -1,30 +1,13 @@
-#data
+# data
 
-type Wallet {
-  id: ID! @unique
-  user: User!
-  amount: Float!
-  wallet_transactions: [WalletTransaction!]!
-  deleted: Boolean! @default(value: "false")
-  deletedAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
+type WalletData {
+  status: String!
+  message: String!
 }
-
-type WalletTransaction {
-  id: ID! @unique
+input WalletTransactionInput {
   amount: Float!
-  type: TransactionType!
-  description: String!
-  wallet: Wallet!
-  deleted: Boolean! @default(value: "false")
-  deletedAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
-
-enum TransactionType {
-  Debit
-  Credit
-  Pending
+input WalletTransferInput {
+  amount: Float!
+  receiverPhone: String!
 }

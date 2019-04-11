@@ -43,12 +43,12 @@ export default {
       return await updatePassword(token, oldPassword, newPassword);
     },
     updateProfile: async (parent, args, ctx, info) => {
-      const { firstname, lastname, gender } = args.data;
+      const { fullname, gender } = args.data;
       const token = getToken(ctx);
       if (!token) {
         throw new Error("Not Authenticated");
       }
-      return await updateProfile(token, firstname, lastname, gender);
+      return await updateProfile(token, fullname, gender);
     }
   }
 };

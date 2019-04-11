@@ -26,6 +26,7 @@ describe("test all users functions", () => {
     return destroyUsersTable();
   });
   afterAll(() => {
+    destroyWalletTable();
     return destroyUsersTable();
   });
 

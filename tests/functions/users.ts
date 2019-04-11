@@ -1,7 +1,7 @@
 import { prisma } from "../../src/schema/generated/prisma-client";
 const { createUser } = require("../../src/helpers/user.helpers");
-
 export async function destroyWalletTable() {
+  await prisma.deleteManyWalletTransactions();
   await prisma.deleteManyWallets();
 }
 export async function destroyUsersTable() {
