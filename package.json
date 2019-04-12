@@ -12,7 +12,7 @@
     "prisma-deploy": "npm run prisma-deploy:test && npm run prisma-deploy:prod",
     "prisma-deploy:test": "prisma deploy -e test.env",
     "prisma-deploy:prod": "prisma deploy",
-    "heroku-postbuild": "tsc"
+    "heroku-postbuild": "npm i -D"
   },
   "author": "",
   "license": "ISC",
