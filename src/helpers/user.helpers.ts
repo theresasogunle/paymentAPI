@@ -43,59 +43,56 @@ export async function sendVerificationCode(email: string, code?: number) {
   if (user.verified) {
     throw new Error("User has been verified");
   }
-  return new Promise(async (resolve, reject) => {
-    // generate a 6 digit number for verification if code is not present
-    if (!code) {
-      code = Math.floor(Math.random() * 900000) + 100000;
-    }
+  // generate a 6 digit number for verification if code is not present
+  if (!code) {
+    code = Math.floor(Math.random() * 900000) + 100000;
+  }
+  if (String(code).length !== 6) {
+    throw new Error("Code must be 6 digits");
+  }
 
-    if (String(code).length !== 6) {
-      throw new Error("Code must be 6 digits");
-    }
-
-    // check if an activation Code exists before for the user
-    const verificationCodes = await prisma.verificationCodes({
-      where: {
-        user: {
-          email
-        }
-      }
-    });
-
-    let verificationCode;
-    // if it exists delete the verification code
-    if (verificationCodes.length > 0) {
-      verificationCode = verificationCodes[0];
-      await prisma.deleteVerificationCode({
-        id: verificationCode.id
-      });
-    }
-
-    // create the verification
-    const newVerificationCode = await prisma.createVerificationCode({
-      code,
+  //check if an activation Code exists before for the user
+  const verificationCodes = await prisma.verificationCodes({
+    where: {
       user: {
-        connect: {
-          email
-        }
+        email
       }
-    });
-
-    await mail({
-      user,
-      message: `Hello ${
-        user.fullname
-      }. Welcome to the future of Insurance. Enter this ${
-        newVerificationCode.code
-      }, to verify your account`,
-      subject: `Welcome to KarigoInsur`
-    });
-    resolve({
-      user,
-      status: "successful",
-      message: "Please verify with the code sent to you"
-    });
+    }
   });
+
+  let verificationCode;
+  // if it exists delete the verification code
+  if (verificationCodes.length > 0) {
+    verificationCode = verificationCodes[0];
+    await prisma.deleteVerificationCode({
+      id: verificationCode.id
+    });
+  }
+
+  // create the verification
+  const newVerificationCode = await prisma.createVerificationCode({
+    code,
+    user: {
+      connect: {
+        email
+      }
+    }
+  });
+
+  await mail({
+    user,
+    message: `Hello ${
+      user.fullname
+    }. Welcome to the future of Insurance. Enter this ${
+      newVerificationCode.code
+    }, to verify your account`,
+    subject: `Welcome to KarigoInsur`
+  });
+  return {
+    user,
+    status: "successful",
+    message: "Please verify with the code sent to you"
+  };
 }
 
 export async function verifyUser(email: string, code?: number) {
