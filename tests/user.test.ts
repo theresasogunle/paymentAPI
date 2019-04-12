@@ -45,13 +45,11 @@ describe("test all users functions", () => {
     };
   }, 30000);
 
-  test('should throw error for user if they don\'t exist', async() => {
+  test("should throw error for user if they don't exist", async () => {
     try {
-      const user = await findUser(data.phonenumber);
+      await findUser(data.phonenumber);
     } catch (error) {
-      expect(error.message).toBe(
-        "null"
-      );
+      expect(error.message).toBe("null");
     }
   }, 30000);
 
@@ -150,12 +148,12 @@ describe("test all users functions", () => {
     await resetPassword(data.email, 456789, password1);
     const user = await login({ email: data.email, password: password1 });
     expect(Object.keys(user).sort()).toEqual(["token", "user"].sort());
-  });
+  }, 30000);
 
   test("should change password on update password", async () => {
     const user = await login({ email: data.email, password: password1 });
     await updatePassword(user.token, password1, password2);
     const userNewPass = await login({ email: data.email, password: password2 });
     expect(Object.keys(userNewPass).sort()).toEqual(["token", "user"].sort());
-  });
+  }, 30000);
 });

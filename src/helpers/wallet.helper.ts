@@ -1,5 +1,6 @@
 import { verifyToken } from "../middleware/utils";
 import { prisma, TransactionType } from "../schema/generated/prisma-client";
+import { interswitchPay } from "./interswitch/payment";
 
 // initiate wallet transaction
 export async function walletTransaction(
@@ -107,30 +108,42 @@ export async function walletTransfer(
 // initiate wallet transaction
 export async function fundWallet(token: string, amount: number) {
   // get user from token
-  const { user } = verifyToken(token) as any;
+  const { user, phonenumber } = verifyToken(token) as any;
   if (user === "user") {
-    // get user's wallet
-    const wallet = await prisma.wallets({
+    await interswitchPay(
+      "5061030000000000084",
+      "1909",
+      "123",
+      "1234",
+      amount,
+      user
+    );
+
+    let wallet = await prisma.wallets({
       where: {
         user: {
-          phonenumber: user.phonenumber
+          phonenumber: phonenumber
         }
       }
     });
-    // create wallet transaction
-    await prisma.createWalletTransaction({
-      amount: amount,
-      type: "Pending",
-      description: `Funded wallet with ${amount}`,
-      wallet: {
-        connect: {
-          id: wallet[0].id
-        }
+    await walletTransaction(
+      wallet[0].id,
+      amount,
+      `new credit transaction of ${amount} to the wallet`,
+      "Credit"
+    );
+
+    await prisma.updateWallet({
+      data: {
+        amount: wallet[0].amount + amount
+      },
+      where: {
+        id: wallet[0].id
       }
     });
   }
   return {
     status: `success`,
-    message: `wallet transaction created`
+    message: `wallet credited`
   };
 }

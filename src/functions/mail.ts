@@ -15,7 +15,7 @@ interface Message {
 export default function mail(input: Message) {
   const { user, message, subject } = input;
   const data = {
-    from: "KarigoInsur <noreply@deatt.com>",
+    from: "Payment App <noreply@deatt.com>",
     to: user.email,
     subject: subject,
     text: message

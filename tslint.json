@@ -19,7 +19,8 @@
         "prefer-const": false,
         "no-empty": false,
         "arrow-parens": false,
-        "no-shadowed-variable": false
+        "no-shadowed-variable": false,
+        "no-bitwise": false
 
     },
     "rulesDirectory": []

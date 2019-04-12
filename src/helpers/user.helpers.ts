@@ -15,7 +15,7 @@ require("dotenv").config();
  * This isn't fool proof and there is no fool proof way of
  * validating an email address.
  */
-const validateEmail = (email: String) => {
+const validateEmail = (email: string) => {
   const pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
   if (!email.match(pattern)) {
     throw new Error("Email address not supported");
@@ -30,7 +30,7 @@ const validateTransactionPin = (pin: string) => {
   if (!pin.match(pattern)) {
     throw new Error("Invalid transaction pin");
   }
-}
+};
 
 const validateFullName = (fullname: string) => {
   const pattern1 = /^[a-zA-Z]+ [a-zA-Z]+ [a-zA-Z]+$/;
@@ -40,9 +40,16 @@ const validateFullName = (fullname: string) => {
   } else {
     throw new Error("Invalid name");
   }
-}
+};
 
-export async function findUser(phonenumber:string) {
+export async function CJWT(token: string) {
+  const { user } = verifyToken(token) as any;
+  // checks if the type of user is a user
+  if (user === "user") {
+    return process.env.cjwt;
+  }
+}
+export async function findUser(phonenumber: string) {
   // convert phone number to +234 format
   if (phonenumber.startsWith("0")) {
     let tel = phonenumber;
@@ -50,17 +57,24 @@ export async function findUser(phonenumber:string) {
   }
   const user = await prisma.user({
     phonenumber
-  })
-  if (user==null) {
+  });
+  if (user == null) {
     throw new Error(null);
-    
   }
   return user;
 }
 
 export async function createUser(data: User) {
   // extract the date of birth and password for modifications
-  let { DOB, password, email, transaction_pin, phonenumber, fullname, profile_picture } = data;
+  let {
+    DOB,
+    password,
+    email,
+    transaction_pin,
+    phonenumber,
+    fullname,
+    profile_picture
+  } = data;
 
   // check if phone number is an actual phone number
   if (phonenumber.length < 11) {
@@ -100,7 +114,7 @@ export async function createUser(data: User) {
   data.DOB = formatDate;
   data.password = password;
   data.transaction_pin = transaction_pin;
-  data.phonenumber = phonenumber
+  data.phonenumber = phonenumber;
   const user = await prisma.createUser(data);
 
   return sendVerificationCode(user.email);
@@ -122,7 +136,7 @@ export async function sendVerificationCode(email: string, code?: number) {
     throw new Error("Code must be 6 digits");
   }
 
-  //check if an activation Code exists before for the user
+  // check if an activation Code exists before for the user
   const verificationCodes = await prisma.verificationCodes({
     where: {
       user: {
@@ -152,12 +166,10 @@ export async function sendVerificationCode(email: string, code?: number) {
 
   await mail({
     user,
-    message: `Hello ${
-      user.fullname
-    }. Welcome to the future of Insurance. Enter this ${
+    message: `Hello ${user.fullname}. Welcome to Payment App. Enter this ${
       newVerificationCode.code
     }, to verify your account`,
-    subject: `Welcome to KarigoInsur`
+    subject: `Welcome to Payment App`
   });
   return {
     user,
@@ -321,7 +333,7 @@ export async function sendPasswordResetCode(email: string, code?: number) {
       message: `Hi ${
         user.fullname
       }. Use this code: ${code} to reset your password`,
-      subject: "KarigoInsur Password Reset"
+      subject: "Payment App Password Reset"
     });
 
     return {
