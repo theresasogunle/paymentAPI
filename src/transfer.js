@@ -1,7 +1,7 @@
 var jwt = require('jsonwebtoken');
 var jsSHA = require('jssha');
 var Interswitch = require('interswitch');
-//uses special merchant details
+
 var secret = "XCTiBtLy1G9chAnyg0z3BcaFK4cVpwDg/GTw2EmjTZ8=";
 var clientId = "IKIA9614B82064D632E9B6418DF358A6A4AEA84D7218";
 var access_token = "eyJhbGciOiJSUzI1NiJ9.eyJhdWQiOlsicXVpY2t0ZWxsZXIiLCJxdWlja3RlbGxlci13YWxsZXQiXSwic2NvcGUiOlsicHJvZmlsZSJdLCJleHAiOjE1NTQ4MTM5NDIsImNsaWVudF9sb2dvIjpudWxsLCJqdGkiOiI0YjA5NDVkMy0xN2U3LTRiN2UtYjBiMS0zMTVhNWMxMGMyYTMiLCJjbGllbnRfZGVzY3JpcHRpb24iOm51bGwsImNsaWVudF9pZCI6IklLSUEzMUVDMjUxN0QyMEY5RDlCMUE2RTM2Q0MxQ0IxMThCNTYzNEFDMzFGIn0.avhSj_mRQUocJhJ8kMs7ykvJuppZPCw1JFpkcDnkgdRh_7smnr4cjnOD-wrvceNWeHTtEeTEHSfknkAiehGRO1sBMvG1gkHSeB2b28aX2fpFiQqkPDSozjOkGQBKZ061OgLoAEvMzmZAhLeST2a4Q1ZZ_cSqmDPff9UwKA-i1XMJqPTgxfHVi8nA_MVRnCLWrqsXEmqPAh2ZCrNJoikrXHyK2sVJ_F6jRH8rVZbtVCGnWKDA5hQ2wzZsup5C1eSVdWpNbJm0O4-aKQdtReb8WQYjAWZdEMr1g-aAkHMU4IcIGAHyeWmyUuc9uncQi1t0GKeOXyDmJGag1fd2bUOI4A"
@@ -25,7 +25,6 @@ var req1 = {
         "lastname": "chi",
         "othernames": "chi"
     },
-    "initiatingEntityCode": "FIB",
     "initiation": {
         "amount": "100000",
         "channel": "7",
@@ -61,7 +60,6 @@ var req = {
         "lastname": "chi",
         "othernames": "chi"
     },
-    "initiatingEntityCode": "FIB",
     "initiation": {
         "amount": "100000",
         "channel": "7",
@@ -85,7 +83,7 @@ var req = {
         "entityCode": "058",
         "paymentMethodCode": "AC"
     },
-    "transferCode": getUniqueId()
+    "transferCode": `${1413}${getUniqueId()}`
 };
 
 
@@ -95,8 +93,6 @@ var obj1 = {
     requestData: req,
     httpHeaders: {
         "Content-Type": "application/json",
-
-
     }
 };
 // send the actual request

@@ -10,17 +10,17 @@ var ENV = "SANDBOX"; // or PRODUCTION
 var interswitch = new Interswitch(clientId, secret, ENV);
 
 //card details
-var pan = "5061030000000000084";
-var expDate = "1909";
+var pan = "4000000000000002";
+var expDate = "2001";
 var cvv = "123";
-var pin = "1234";
+// var pin = "1234";
 
 
 var authData = interswitch.getAuthData({
     pan: pan,
     expDate: expDate,
     cvv: cvv,
-    pin: pin
+    // pin: pin
 });
 
 //unique id
@@ -35,7 +35,7 @@ var getUniqueId = function () {
 var id = getUniqueId();
 var paymentReqRef = "ISW-SDK-PAYMENT-" + id;
 var req = {
-    "customerId": "1407002510", // Email, mobile number, BVN etc to uniquely identify the customer.
+    "customerId": "14070510", // Email, mobile number, BVN etc to uniquely identify the customer.
     "amount": "100", // Amount in Naira.
     "transactionRef": paymentReqRef, // Unique transaction reference number.
     "currency": "NGN", // ISO Currency code.

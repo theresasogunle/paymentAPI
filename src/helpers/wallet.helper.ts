@@ -1,33 +1,24 @@
 import { verifyToken } from "../middleware/utils";
-import { prisma } from "../schema/generated/prisma-client";
-export async function initiateWalletTransaction(token: string, amount: number) {
-  // get user from token
-  const { user } = verifyToken(token) as any;
-  if (user === "user") {
-    // get user's wallet
-    const wallet = await prisma.wallets({
-      where: {
-        user: {
-          phonenumber: user.phonenumber
-        }
+import { prisma, TransactionType } from "../schema/generated/prisma-client";
+
+// initiate wallet transaction
+export async function walletTransaction(
+  walletId: string,
+  amount: number,
+  description: string,
+  transactionType: TransactionType
+) {
+  // create wallet transaction
+  return await prisma.createWalletTransaction({
+    amount: amount,
+    type: transactionType,
+    description: description,
+    wallet: {
+      connect: {
+        id: walletId
       }
-    });
-    // create wallet transaction
-    await prisma.createWalletTransaction({
-      amount: amount,
-      type: "Pending",
-      description: `Funded wallet with ${amount}`,
-      wallet: {
-        connect: {
-          id: wallet[0].id
-        }
-      }
-    });
-  }
-  return {
-    status: `success`,
-    message: `wallet transaction created`
-  };
+    }
+  });
 }
 
 export async function walletTransfer(
@@ -67,21 +58,17 @@ export async function walletTransfer(
     // throw insufficient funds error, else continue with the transfer process
     if (walletSender[0].amount > amount) {
       // create a debit wallet transaction
-      await prisma.createWalletTransaction({
-        amount: amount,
-        type: "Debit",
-        description: `Transfer ${amount} to ${userReceiver.fullname} `,
-        wallet: {
-          connect: {
-            id: walletSender[0].id
-          }
-        }
-      });
-      let newAmount = walletSender[0].amount - amount;
+      walletTransaction(
+        walletSender[0].id,
+        amount,
+        `Transfer ${amount} to ${userReceiver.fullname} `,
+        "Debit"
+      );
+
       // update sender wallet with the remaining amount left after the transfer
       await prisma.updateWallet({
         data: {
-          amount: newAmount
+          amount: walletSender[0].amount - amount
         },
         where: {
           id: walletSender[0].id
@@ -89,19 +76,13 @@ export async function walletTransfer(
       });
 
       // create a wallet transaction for crediting the receiver's wallet
-      await prisma.createWalletTransaction({
-        amount: amount,
-        type: "Credit",
-        description: ` ${amount} transfer from ${user.fullname} `,
-        wallet: {
-          connect: {
-            id: walletReceiver[0].id
-          }
-        }
-      });
-
+      walletTransaction(
+        walletReceiver[0].id,
+        amount,
+        `${amount} transfered from ${user.fullname} `,
+        "Credit"
+      );
       // update the receiver's wallet with the new amount
-
       await prisma.updateWallet({
         data: {
           amount: walletReceiver[0].amount + amount
@@ -120,5 +101,36 @@ export async function walletTransfer(
   return {
     status: `success`,
     message: `wallet transfer successful`
+  };
+}
+
+// initiate wallet transaction
+export async function fundWallet(token: string, amount: number) {
+  // get user from token
+  const { user } = verifyToken(token) as any;
+  if (user === "user") {
+    // get user's wallet
+    const wallet = await prisma.wallets({
+      where: {
+        user: {
+          phonenumber: user.phonenumber
+        }
+      }
+    });
+    // create wallet transaction
+    await prisma.createWalletTransaction({
+      amount: amount,
+      type: "Pending",
+      description: `Funded wallet with ${amount}`,
+      wallet: {
+        connect: {
+          id: wallet[0].id
+        }
+      }
+    });
+  }
+  return {
+    status: `success`,
+    message: `wallet transaction created`
   };
 }

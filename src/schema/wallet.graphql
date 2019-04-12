@@ -4,9 +4,7 @@ type WalletData {
   status: String!
   message: String!
 }
-input WalletTransactionInput {
-  amount: Float!
-}
+
 input WalletTransferInput {
   amount: Float!
   receiverPhone: String!
