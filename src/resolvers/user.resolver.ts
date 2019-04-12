@@ -1,7 +1,6 @@
 import {
-  CJWT,
+  authenticateUser,
   createUser,
-  findUser,
   login,
   resetPassword,
   sendPasswordResetCode,
@@ -14,15 +13,8 @@ import { getToken } from "../middleware/utils";
 
 export default {
   Query: {
-    findUser: async (parent, args, ctx, info) => {
-      return await findUser(args.phonenumber);
-    },
-    jwt: async (parent, args, ctx, info) => {
-      const token = getToken(ctx);
-      if (!token) {
-        throw new Error("Not Authenticated");
-      }
-      return await CJWT(token);
+    authenticateUser: async (parent, args, ctx, info) => {
+      return await authenticateUser(args.phonenumber);
     }
   },
   Mutation: {

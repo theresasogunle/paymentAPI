@@ -1,9 +1,8 @@
-# import User, SignUpInput, SignUpData, LoginUserData, EmailInput, VerifyUserInput, LoginInput, VerificationDataInput, ChangePasswordInput, UpdatePasswordInput, UpdateProfileInput from './user.graphql'
+# import User, SignUpInput, SignUpData, LoginUserData, EmailInput, AuthenticateUserData, VerifyUserInput, LoginInput, VerificationDataInput, ChangePasswordInput, UpdatePasswordInput, UpdateProfileInput from './user.graphql'
 #import WalletData,WalletTransferInput from './wallet.graphql'
 type Query {
   # user query
-  findUser(phonenumber: String!): User!
-  jwt: String!
+  authenticateUser(phonenumber: String!): AuthenticateUserData!
 }
 type Mutation {
   # user mutations

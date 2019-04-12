@@ -42,14 +42,7 @@ const validateFullName = (fullname: string) => {
   }
 };
 
-export async function CJWT(token: string) {
-  const { user } = verifyToken(token) as any;
-  // checks if the type of user is a user
-  if (user === "user") {
-    return process.env.cjwt;
-  }
-}
-export async function findUser(phonenumber: string) {
+export async function authenticateUser(phonenumber: string) {
   // convert phone number to +234 format
   if (phonenumber.startsWith("0")) {
     let tel = phonenumber;
@@ -59,9 +52,15 @@ export async function findUser(phonenumber: string) {
     phonenumber
   });
   if (user == null) {
-    throw new Error(null);
+    return {
+      phonenumber,
+      status: "register"
+    };
   }
-  return user;
+  return {
+    phonenumber,
+    status: "login"
+  };
 }
 
 export async function createUser(data: User) {

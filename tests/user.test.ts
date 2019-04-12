@@ -8,7 +8,7 @@ import {
   sendPasswordResetCode,
   updatePassword,
   verifyUser,
-  findUser
+  authenticateUser
 } from "../src/helpers/user.helpers";
 import { prisma } from "../src/schema/generated/prisma-client";
 import { destroyUsersTable, destroyWalletTable } from "./functions/users";
@@ -45,12 +45,9 @@ describe("test all users functions", () => {
     };
   }, 30000);
 
-  test("should throw error for user if they don't exist", async () => {
-    try {
-      await findUser(data.phonenumber);
-    } catch (error) {
-      expect(error.message).toBe("null");
-    }
+  test("should get a status of register when you authenticate user", async () => {
+    const user = await authenticateUser(data.phonenumber);
+    expect(user.status).toBe("register");
   }, 30000);
 
   test("should throw error if password is less than 8 characters", async () => {
