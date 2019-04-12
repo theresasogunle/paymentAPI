@@ -3,12 +3,12 @@ const {
   sendVerificationCode
 } = require("../src/helpers/user.helpers");
 import {
+  authenticateUser,
   login,
   resetPassword,
   sendPasswordResetCode,
   updatePassword,
-  verifyUser,
-  authenticateUser
+  verifyUser
 } from "../src/helpers/user.helpers";
 import { prisma } from "../src/schema/generated/prisma-client";
 import { destroyUsersTable, destroyWalletTable } from "./functions/users";
