@@ -5,7 +5,7 @@ type User {
   email: String! @unique
   phonenumber: String! @unique
   password: String!
-  profile_picture: String!
+  profile_picture: String
   transaction_pin: String!
   gender: Gender!
   verified: Boolean! @default(value: "false")

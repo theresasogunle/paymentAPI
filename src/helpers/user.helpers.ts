@@ -7,9 +7,79 @@ import mail from "../functions/mail";
 import { verifyToken } from "../middleware/utils";
 require("dotenv").config();
 
+/**
+ * Function to validate email address
+ * @param {String} email {Required} The email to be validated
+ * @return {Boolean} A Boolean value indicating if the email is valid
+ * N/B
+ * This isn't fool proof and there is no fool proof way of
+ * validating an email address.
+ */
+const validateEmail = (email: String) => {
+  const pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+  if (!email.match(pattern)) {
+    throw new Error("Email address not supported");
+  }
+};
+
+const validateTransactionPin = (pin: string) => {
+  const pattern = /^[0-9]*$/gm;
+  if (pin.length !== 4) {
+    throw new Error("Invalid transaction pin");
+  }
+  if (!pin.match(pattern)) {
+    throw new Error("Invalid transaction pin");
+  }
+}
+
+const validateFullName = (fullname: string) => {
+  const pattern1 = /^[a-zA-Z]+ [a-zA-Z]+ [a-zA-Z]+$/;
+  const pattern2 = /^[a-zA-Z]+ [a-zA-Z]+$/;
+  if (fullname.match(pattern1) || fullname.match(pattern2)) {
+    return true;
+  } else {
+    throw new Error("Invalid name");
+  }
+}
+
+export async function findUser(phonenumber:string) {
+  // convert phone number to +234 format
+  if (phonenumber.startsWith("0")) {
+    let tel = phonenumber;
+    phonenumber = "+234" + tel.substr(1);
+  }
+  const user = await prisma.user({
+    phonenumber
+  })
+  if (user==null) {
+    throw new Error(null);
+    
+  }
+  return user;
+}
+
 export async function createUser(data: User) {
   // extract the date of birth and password for modifications
-  let { DOB, password, email, transaction_pin } = data;
+  let { DOB, password, email, transaction_pin, phonenumber, fullname, profile_picture } = data;
+
+  // check if phone number is an actual phone number
+  if (phonenumber.length < 11) {
+    throw new Error("Your phone number is incomplete");
+  }
+  // validate the transaction pin
+  await validateTransactionPin(transaction_pin);
+
+  // validate the geniunity of email address
+  await validateEmail(email);
+
+  // validate users name
+  await validateFullName(fullname);
+
+  // convert phone number to +234 format
+  if (phonenumber.startsWith("0")) {
+    let tel = phonenumber;
+    phonenumber = "+234" + tel.substr(1);
+  }
 
   // check if password is greater than 7 characters
   if (password.length < 8) {
@@ -30,6 +100,7 @@ export async function createUser(data: User) {
   data.DOB = formatDate;
   data.password = password;
   data.transaction_pin = transaction_pin;
+  data.phonenumber = phonenumber
   const user = await prisma.createUser(data);
 
   return sendVerificationCode(user.email);

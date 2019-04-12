@@ -298,7 +298,7 @@ type User {
   email: String!
   phonenumber: String!
   password: String!
-  profile_picture: String!
+  profile_picture: String
   transaction_pin: String!
   gender: Gender!
   verified: Boolean!
@@ -323,7 +323,7 @@ input UserCreateInput {
   email: String!
   phonenumber: String!
   password: String!
-  profile_picture: String!
+  profile_picture: String
   transaction_pin: String!
   gender: Gender!
   verified: Boolean
@@ -355,7 +355,7 @@ input UserCreateWithoutPasswordResetCodeInput {
   email: String!
   phonenumber: String!
   password: String!
-  profile_picture: String!
+  profile_picture: String
   transaction_pin: String!
   gender: Gender!
   verified: Boolean
@@ -371,7 +371,7 @@ input UserCreateWithoutVerificationCodeInput {
   email: String!
   phonenumber: String!
   password: String!
-  profile_picture: String!
+  profile_picture: String
   transaction_pin: String!
   gender: Gender!
   verified: Boolean
@@ -387,7 +387,7 @@ input UserCreateWithoutWalletInput {
   email: String!
   phonenumber: String!
   password: String!
-  profile_picture: String!
+  profile_picture: String
   transaction_pin: String!
   gender: Gender!
   verified: Boolean
@@ -440,7 +440,7 @@ type UserPreviousValues {
   email: String!
   phonenumber: String!
   password: String!
-  profile_picture: String!
+  profile_picture: String
   transaction_pin: String!
   gender: Gender!
   verified: Boolean!

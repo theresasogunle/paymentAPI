@@ -430,7 +430,7 @@ export interface UserCreateWithoutPasswordResetCodeInput {
   email: String;
   phonenumber: String;
   password: String;
-  profile_picture: String;
+  profile_picture?: String;
   transaction_pin: String;
   gender: Gender;
   verified?: Boolean;
@@ -1223,7 +1223,7 @@ export interface UserCreateWithoutVerificationCodeInput {
   email: String;
   phonenumber: String;
   password: String;
-  profile_picture: String;
+  profile_picture?: String;
   transaction_pin: String;
   gender: Gender;
   verified?: Boolean;
@@ -1243,7 +1243,7 @@ export interface UserCreateInput {
   email: String;
   phonenumber: String;
   password: String;
-  profile_picture: String;
+  profile_picture?: String;
   transaction_pin: String;
   gender: Gender;
   verified?: Boolean;
@@ -1358,7 +1358,7 @@ export interface UserCreateWithoutWalletInput {
   email: String;
   phonenumber: String;
   password: String;
-  profile_picture: String;
+  profile_picture?: String;
   transaction_pin: String;
   gender: Gender;
   verified?: Boolean;
@@ -1974,7 +1974,7 @@ export interface User {
   email: String;
   phonenumber: String;
   password: String;
-  profile_picture: String;
+  profile_picture?: String;
   transaction_pin: String;
   gender: Gender;
   verified: Boolean;
@@ -2133,7 +2133,7 @@ export interface UserPreviousValues {
   email: String;
   phonenumber: String;
   password: String;
-  profile_picture: String;
+  profile_picture?: String;
   transaction_pin: String;
   gender: Gender;
   verified: Boolean;

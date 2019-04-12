@@ -6,12 +6,13 @@
   "scripts": {
     "test": "env-cmd ./test.env jest --runInBand",
     "lint": "tslint -e .tslintignore -t stylish --project tsconfig.json",
-    "test:watch": "env-cmd ./test.env jest --watchAll",
+    "test:watch": "env-cmd ./test.env jest --watchAll  --runInBand",
     "start": "env-cmd .env ts-node src/index.ts",
     "dev": "env-cmd .env nodemon --ext ts,graphql,yml,env -w ./src -x npm start",
-    "prisma-deploy": "npm run prisma-deploy:test && npm run prisma-deploy:prod",
+    "prisma-deploy": "npm run prisma-deploy:test && npm run prisma-deploy:prod && npm run prisma-deploy:heroku",
     "prisma-deploy:test": "prisma deploy -e test.env",
     "prisma-deploy:prod": "prisma deploy",
+    "prisma-deploy:heroku": "prisma deploy -e dev.env",
     "heroku-postbuild": "npm i -D"
   },
   "author": "",

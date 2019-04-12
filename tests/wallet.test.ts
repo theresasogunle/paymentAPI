@@ -27,7 +27,7 @@ describe("test all wallet functions", () => {
   // set the data before each tests
   beforeEach(() => {
     data = {
-      fullname: "Oluwole ",
+      fullname: "Oluwole Adebiyi",
       DOB: "Jun 3 1992",
       email: "flamekeed@gmail.com",
       phonenumber: "+2347032190295",
@@ -39,7 +39,7 @@ describe("test all wallet functions", () => {
   }, 30000);
   // for wallet transfer to another user
   receiverData = {
-    fullname: "Omowunmi",
+    fullname: "Omowunmi Sogunle",
     DOB: "Aug 3 1995",
     email: "sogunledolapo@gmail.com",
     phonenumber: "+2347032190293",
