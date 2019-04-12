@@ -5,7 +5,7 @@ import {
   verifyUser
 } from "../src/helpers/user.helpers";
 import {
-  initiateWalletTransaction,
+  walletTransaction,
   walletTransfer
 } from "../src/helpers/wallet.helper";
 import { prisma } from "../src/schema/generated/prisma-client";
@@ -101,9 +101,20 @@ describe("test all wallet functions", () => {
 
   // wallet transaction initiation testing
   test("should initiate wallet transaction", async () => {
-    const user = await login({ email: data.email, password: "password" });
-    const transaction = await initiateWalletTransaction(user.token, 500);
-    expect(transaction.status).toBe("success");
+    const wallet = await prisma.wallets({
+      where: {
+        user: {
+          phonenumber: data.phonenumber
+        }
+      }
+    });
+    const transaction = await walletTransaction(
+      wallet[0].id,
+      500,
+      "test",
+      "Credit"
+    );
+    expect(transaction).toBeDefined();
   });
 
   // wallet to wallet transaction
