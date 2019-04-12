@@ -7,7 +7,7 @@
     "test": "env-cmd ./test.env jest --runInBand",
     "lint": "tslint -e .tslintignore -t stylish --project tsconfig.json",
     "test:watch": "env-cmd ./test.env jest --watchAll",
-    "start": "env-cmd .env ts-node src/index.js",
+    "start": "env-cmd .env ts-node src/index.ts",
     "dev": "env-cmd .env nodemon --ext ts,graphql,yml,env -w ./src -x npm start",
     "prisma-deploy": "npm run prisma-deploy:test && npm run prisma-deploy:prod",
     "prisma-deploy:test": "prisma deploy -e test.env",
