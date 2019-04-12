@@ -1,13 +1,26 @@
 {
     "defaultSeverity": "error",
-    "extends": ["tslint:latest", "tslint-config-prettier"],
+    "extends": [
+        "tslint:recommended"
+    ],
+    "linterOptions": {
+        "exclude": [
+            "src/schema/generated/prisma-client/*.ts"
+        ]
+    },
     "jsRules": {},
     "rules": {
-      "no-console": false,
-      "member-access": false,
-      "object-literal-sort-keys": false,
-      "ordered-imports": false,
-      "interface-name": false
+        "object-literal-shorthand": false,
+        "object-literal-sort-keys": false,
+        "trailing-comma": false,
+        "no-var-requires": false,
+        "interface-name": false,
+        "no-console": false,
+        "prefer-const": false,
+        "no-empty": false,
+        "arrow-parens": false,
+        "no-shadowed-variable": false
+
     },
     "rulesDirectory": []
-  }
+}

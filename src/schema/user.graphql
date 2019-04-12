@@ -2,9 +2,7 @@
 
 type User {
   id: ID!
-  firstname: String!
-  middlename: String!
-  lastname: String!
+  fullname: String!
   DOB: String!
   email: String!
   phonenumber: String!
@@ -65,8 +63,14 @@ input UpdatePasswordInput {
   newPassword: String!
 }
 
+input UpdateProfileInput {
+  firstname: String!
+  lastname: String!
+  gender: Gender
+}
+
 #enums
 enum Gender {
-  Male,
+  Male
   Female
 }

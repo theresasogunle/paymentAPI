@@ -1,15 +1,15 @@
-import { prisma, User, Gender } from "../schema/generated/prisma-client";
-var dateFormat = require("dateformat");
-var bcrypt = require("bcryptjs");
-import { salt } from "../const";
+import { Gender, prisma, User } from "../schema/generated/prisma-client";
+const dateFormat = require("dateformat");
+const bcrypt = require("bcryptjs");
 import { sign } from "jsonwebtoken";
+import { salt } from "../const";
 import mail from "../functions/mail";
 import { verifyToken } from "../middleware/utils";
 require("dotenv").config();
 
 export async function createUser(data: User) {
   // extract the date of birth and password for modifications
-  let { DOB, password, email } = data;
+  let { DOB, password, email, transaction_pin } = data;
 
   // check if password is greater than 7 characters
   if (password.length < 8) {
@@ -23,9 +23,15 @@ export async function createUser(data: User) {
   formatDate = new Date(formatDate);
   // hash password
   password = bcrypt.hashSync(password, salt);
+  // hash transaction pin
+  transaction_pin = bcrypt.hashSync(transaction_pin, salt);
+
+  // add it back to the data object
   data.DOB = formatDate;
   data.password = password;
+  data.transaction_pin = transaction_pin;
   const user = await prisma.createUser(data);
+
   return sendVerificationCode(user.email);
 }
 
@@ -53,7 +59,7 @@ export async function sendVerificationCode(email: string, code?: number) {
       }
     }
   });
-  
+
   let verificationCode;
   // if it exists delete the verification code
   if (verificationCodes.length > 0) {
@@ -76,13 +82,13 @@ export async function sendVerificationCode(email: string, code?: number) {
   await mail({
     user,
     message: `Hello ${
-      user.firstname
+      user.fullname
     }. Welcome to the future of Insurance. Enter this ${
       newVerificationCode.code
     }, to verify your account`,
     subject: `Welcome to KarigoInsur`
   });
-  return{
+  return {
     user,
     status: "successful",
     message: "Please verify with the code sent to you"
@@ -90,7 +96,7 @@ export async function sendVerificationCode(email: string, code?: number) {
 }
 
 export async function verifyUser(email: string, code?: number) {
-  //check if an activation Code exists before for the user
+  // check if an activation Code exists before for the user
   const verificationCodes = await prisma.verificationCodes({
     where: {
       user: {
@@ -107,10 +113,10 @@ export async function verifyUser(email: string, code?: number) {
 
   if (verificationCode.code === code) {
     const expTime = new Date(verificationCode.updatedAt);
-    var now = new Date();
+    let now = new Date();
     // subtract date
-    var diffMs = now.getTime() - expTime.getTime();
-    var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+    let diffMs = now.getTime() - expTime.getTime();
+    let diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
     if (diffMins <= 60) {
       // update the user verified status to true
       await prisma.updateUser({
@@ -119,6 +125,15 @@ export async function verifyUser(email: string, code?: number) {
         },
         data: {
           verified: true
+        }
+      });
+      // create Wallet
+      await prisma.createWallet({
+        amount: 0,
+        user: {
+          connect: {
+            email
+          }
         }
       });
 
@@ -163,8 +178,8 @@ export async function login(loginData: LoginData) {
     throw new Error("Invalid Details");
   }
 
-  //If not verified
-  if (user.verified == false) {
+  // If not verified
+  if (user.verified === false) {
     throw new Error("not_verified");
   }
   // Confirm Password
@@ -233,7 +248,7 @@ export async function sendPasswordResetCode(email: string, code?: number) {
     await mail({
       user,
       message: `Hi ${
-        user.firstname
+        user.fullname
       }. Use this code: ${code} to reset your password`,
       subject: "KarigoInsur Password Reset"
     });
@@ -259,7 +274,7 @@ export async function resetPassword(
     }
   });
 
-  if (passwordResetCodes.length == 0) {
+  if (passwordResetCodes.length === 0) {
     throw new Error("Request for a password reset");
   }
 
@@ -268,10 +283,10 @@ export async function resetPassword(
   // if code align change the password
   if (passwordResetCode.code === code) {
     const expTime = new Date(passwordResetCode.updatedAt);
-    var now = new Date();
+    let now = new Date();
     // subtract date
-    var diffMs = now.getTime() - expTime.getTime();
-    var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
+    let diffMs = now.getTime() - expTime.getTime();
+    let diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000); // minutes
 
     if (diffMins <= 60) {
       const user = await prisma.updateUser({
@@ -305,10 +320,10 @@ export async function updatePassword(
   oldPassword: string,
   newPassword: string
 ) {
-  const { id, email, user } = <any>verifyToken(token);
+  const { id, email, user } = verifyToken(token) as any;
 
   // checks if the type of user is a user
-  if (user == "user") {
+  if (user === "user") {
     const person = await prisma.user({
       email
     });
@@ -350,14 +365,13 @@ export async function updatePassword(
 
 export async function updateProfile(
   token: string,
-  firstname: string,
-  lastname: string,
+  fullname: string,
   gender: Gender
 ) {
-  const { id, email, user } = <any>verifyToken(token);
+  const { id, email, user } = verifyToken(token) as any;
 
   // checks if the type of user is a user
-  if (user == "user") {
+  if (user === "user") {
     const person = await prisma.user({
       email
     });
@@ -367,9 +381,8 @@ export async function updateProfile(
         email
       },
       data: {
-       firstname,
-       lastname,
-       gender
+        fullname,
+        gender
       }
     });
 

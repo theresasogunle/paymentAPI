@@ -1,6 +1,6 @@
 import { importSchema } from "graphql-import";
-import resolvers from "./resolvers";
 import { GraphQLServer } from "graphql-yoga";
+import resolvers from "./resolvers";
 
 const typeDefs = importSchema("./src/schema/schema.graphql");
 

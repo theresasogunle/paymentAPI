@@ -1,12 +1,12 @@
 type User {
   id: ID! @unique
-  firstname: String!
-  middlename: String!
-  lastname: String!
+  fullname: String!
   DOB: DateTime!
   email: String! @unique
   phonenumber: String! @unique
   password: String!
+  profile_picture: String!
+  transaction_pin: String!
   gender: Gender!
   verified: Boolean! @default(value: "false")
   deleted: Boolean! @default(value: "false")
@@ -16,6 +16,7 @@ type User {
   #relationships
   verificationCode: VerificationCode
   passwordResetCode: PasswordResetCode
+  wallet: Wallet
 }
 
 # verification code to verify user
@@ -42,7 +43,40 @@ type PasswordResetCode {
   user: User!
 }
 
+#wallet
+type Wallet {
+  id: ID! @unique
+  amount: Float!
+  deleted: Boolean! @default(value: "false")
+  deletedAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  #relationships
+  user: User!
+  wallet_transactions: [WalletTransaction!]!
+}
+
+type WalletTransaction {
+  id: ID! @unique
+  amount: Float!
+  type: TransactionType!
+  description: String!
+  deleted: Boolean! @default(value: "false")
+  deletedAt: DateTime
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  #relationships
+  wallet: Wallet!
+}
+
+enum TransactionType {
+  Debit
+  Credit
+  Pending
+}
+
 enum Gender {
-  Male,
+  Male
   Female
 }
