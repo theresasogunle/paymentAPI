@@ -26,6 +26,11 @@ type LoginUserData {
   token: String!
 }
 
+type AuthenticateUserData {
+  phonenumber: String!
+  status: String!
+}
+
 #inputs
 
 input SignUpInput {

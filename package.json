@@ -13,7 +13,9 @@
     "prisma-deploy:test": "prisma deploy -e test.env",
     "prisma-deploy:prod": "prisma deploy",
     "prisma-deploy:heroku": "prisma deploy -e dev.env",
-    "heroku-postbuild": "npm i -D"
+    "heroku-postbuild": "npm i -D",
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
   },
   "author": "",
   "license": "ISC",

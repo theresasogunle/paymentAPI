@@ -7,14 +7,14 @@ import {
   updatePassword,
   updateProfile,
   verifyUser,
-  findUser
+  authenticateUser
 } from "../helpers/user.helpers";
 import { getToken } from "../middleware/utils";
 
 export default {
   Query: {
-    findUser: async (parent, args, ctx, info) => {
-      return await findUser(args.phonenumber);
+    authenticateUser: async (parent, args, ctx, info) => {
+      return await authenticateUser(args.phonenumber);
     }
   },
   Mutation: {
