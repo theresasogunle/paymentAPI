@@ -7,7 +7,8 @@ import {
   resetPassword,
   sendPasswordResetCode,
   updatePassword,
-  verifyUser
+  verifyUser,
+  findUser
 } from "../src/helpers/user.helpers";
 import { prisma } from "../src/schema/generated/prisma-client";
 import { destroyUsersTable, destroyWalletTable } from "./functions/users";
@@ -21,12 +22,12 @@ const password2 = "password2";
 
 describe("test all users functions", () => {
   // clear the database after all test runs
-  beforeAll(() => {
-    destroyWalletTable();
+  beforeAll(async () => {
+    await destroyWalletTable();
     return destroyUsersTable();
   });
-  afterAll(() => {
-    destroyWalletTable();
+  afterAll(async () => {
+    await destroyWalletTable();
     return destroyUsersTable();
   });
 
@@ -36,7 +37,7 @@ describe("test all users functions", () => {
       fullname: "Oluwole Ibrahim",
       DOB: "Jun 9 1992",
       email: "flamekeed@gmail.com",
-      phonenumber: "+2347032190293",
+      phonenumber: "07032190293",
       password: "password",
       gender: "Male",
       profile_picture: "image",
@@ -44,15 +45,26 @@ describe("test all users functions", () => {
     };
   }, 30000);
 
+  test('should throw error for user if they don\'t exist', async() => {
+    try {
+      const user = await findUser(data.phonenumber);
+    } catch (error) {
+      expect(error.message).toBe(
+        "null"
+      );
+    }
+  }, 30000);
+
   test("should throw error if password is less than 8 characters", async () => {
     try {
       data.password = "pass";
+      const user = await createUser(data);
     } catch (error) {
       expect(error.message).toBe(
         "Your password should be greater than 7 characters"
       );
     }
-  }, 10000);
+  }, 30000);
 
   test("signup a user", async () => {
     const user = await createUser(data);
@@ -65,7 +77,7 @@ describe("test all users functions", () => {
     const user = await prisma.user({ email: data.email });
     const check = await bcrypt.compareSync(data.password, user.password);
     expect(check).toBeTruthy();
-  }, 10000);
+  }, 30000);
 
   test("ensures date of birth is the same as the one in the DB", async () => {
     // extract the date of birth and password for modifications
@@ -77,12 +89,12 @@ describe("test all users functions", () => {
     const user = await prisma.user({ email: data.email });
     const dbDOB = dateFormat(user.DOB, "yyyy-mm-dd");
     expect(dbDOB).toBe(DOB);
-  });
+  }, 30000);
 
   test("should set verified to false when a user signups", async () => {
     const user = await prisma.user({ email: data.email });
     expect(user.verified).toBeFalsy();
-  });
+  }, 30000);
 
   test("should not verify user with incorrect code", async () => {
     try {
@@ -113,7 +125,7 @@ describe("test all users functions", () => {
       }
     });
     expect(wallet[0]).toBeDefined();
-  });
+  }, 30000);
 
   test("should login a user", async () => {
     const user = await login({ email: data.email, password: data.password });
@@ -126,7 +138,7 @@ describe("test all users functions", () => {
     } catch (error) {
       expect(error.message).toBe("User has been verified");
     }
-  }, 10000);
+  }, 30000);
 
   test("should send reset password code", async () => {
     // tslint:disable-next-line: no-shadowed-variable

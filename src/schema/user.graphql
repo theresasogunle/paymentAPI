@@ -7,6 +7,7 @@ type User {
   email: String!
   phonenumber: String!
   gender: Gender!
+  transaction_pin: String!
   verified: Boolean!
   deleted: Boolean!
   deletedAt: String
@@ -28,9 +29,8 @@ type LoginUserData {
 #inputs
 
 input SignUpInput {
-  firstname: String!
-  middlename: String!
-  lastname: String!
+  fullname: String!
+  transaction_pin: String!
   DOB: String!
   email: String!
   phonenumber: String!

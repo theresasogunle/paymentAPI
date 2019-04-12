@@ -6,12 +6,14 @@
   "scripts": {
     "test": "env-cmd ./test.env jest --runInBand",
     "lint": "tslint -e .tslintignore -t stylish --project tsconfig.json",
-    "test:watch": "env-cmd ./test.env jest --watchAll",
+    "test:watch": "env-cmd ./test.env jest --watchAll  --runInBand",
     "start": "env-cmd .env ts-node src/index.ts",
     "dev": "env-cmd .env nodemon --ext ts,graphql,yml,env -w ./src -x npm start",
-    "prisma-deploy": "npm run prisma-deploy:test && npm run prisma-deploy:prod",
+    "prisma-deploy": "npm run prisma-deploy:test && npm run prisma-deploy:prod && npm run prisma-deploy:heroku",
     "prisma-deploy:test": "prisma deploy -e test.env",
-    "prisma-deploy:prod": "prisma deploy"
+    "prisma-deploy:prod": "prisma deploy",
+    "prisma-deploy:heroku": "prisma deploy -e dev.env",
+    "heroku-postbuild": "npm i -D"
   },
   "author": "",
   "license": "ISC",
@@ -21,8 +23,10 @@
     "bcryptjs": "^2.4.3",
     "dateformat": "^3.0.3",
     "dotenv": "^7.0.0",
+    "env-cmd": "^8.0.2",
     "graphql-import": "^0.7.1",
     "graphql-yoga": "^1.17.4",
+    "interswitch": "^2.1.7",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.11",
     "mailgun-js": "^0.22.0",
@@ -34,7 +38,6 @@
   "devDependencies": {
     "@types/jest": "^24.0.11",
     "@types/node": "^11.13.0",
-    "env-cmd": "^8.0.2",
     "jest": "^24.7.0",
     "ts-jest": "^24.0.1",
     "ts-node": "^8.0.3",
