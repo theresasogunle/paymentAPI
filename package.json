@@ -26,6 +26,7 @@
     "dateformat": "^3.0.3",
     "dotenv": "^7.0.0",
     "env-cmd": "^8.0.2",
+    "axios": "^0.18.0",
     "graphql-import": "^0.7.1",
     "graphql-yoga": "^1.17.4",
     "interswitch": "^2.1.7",
