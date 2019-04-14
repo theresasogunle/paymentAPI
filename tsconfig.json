@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "lib": ["es2016", "esnext.asynciterable"],
+    "moduleResolution": "node"
   },
-  "moduleResolution": "node"
+
 }
