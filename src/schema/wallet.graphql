@@ -3,9 +3,36 @@
 type WalletData {
   status: String!
   message: String!
+  data: JSON
 }
 
-input WalletTransferInput {
+type WalletTransactionData {
+  amount: Float!
+  transactionReference: String!
+  type: TransactionType!
+  description: String!
+}
+
+input WalletToWalletTransferInput {
   amount: Float!
   receiverPhone: String!
+}
+
+input WalletToBankTransferInput {
+  amount: Float!
+  accountNumber: String!
+  bankCode: String!
+}
+
+input InitiateTransactionInput {
+  amount: Float!
+}
+
+input FundWalletInput {
+  transactionReference: String!
+}
+enum TransactionType {
+  Credit
+  Debit
+  Pending
 }

@@ -1,23 +1,15 @@
 import { User } from "../../schema/generated/prisma-client";
 import { generateMAC, interswitch } from "../interswitch/constant";
 
-const getUniqueId = () => {
-  let id = new Date().getTime();
-
-  id += (id + Math.random() * 16) % 16 | 0;
-
-  return id;
-};
-console.log(interswitch);
-
-export async function interswitchTransfer(
+export const interswitchTransfer = async (
   accountNumber: string,
   lastname: string,
   othername: string,
   amount: number,
   bankCode: string,
+  transferCode: string,
   senderUser: User
-) {
+) => {
   let req = {
     mac: "",
     beneficiary: {
@@ -47,27 +39,32 @@ export async function interswitchTransfer(
       entityCode: bankCode,
       paymentMethodCode: "AC"
     },
-    transferCode: `${1413}${getUniqueId()}`
+    transferCode: transferCode
   };
   req.mac = await generateMAC(req);
 
   const obj = {
     url: "api/v2/quickteller/payments/transfers",
     method: "POST",
-    requestData: req,
+    requestData: await req,
     httpHeaders: {
       "Content-Type": "application/json"
     }
   };
   // send the actual request
-  await interswitch.send(obj, async (err, response, res2) => {
-    if (err) {
-      console.log("err in consumer");
-      console.log(JSON.stringify(err));
-    } else {
-      console.log("response was successful");
-      console.log("bank response " + (await JSON.stringify(response.body)));
-      return await response.body;
-    }
+  return new Promise((resolve, reject) => {
+    interswitch.send(obj, (err, response, body) => {
+      if (err) {
+        // tslint:disable-next-line: no-console
+        console.log("err in consumer");
+        // tslint:disable-next-line: no-console
+        console.log(JSON.stringify(err));
+        reject(err);
+      } else {
+        // tslint:disable-next-line: no-console
+        console.log("response was successful");
+        resolve(JSON.parse(body));
+      }
+    });
   });
-}
+};

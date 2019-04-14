@@ -1,8 +1,9 @@
+import BaseURL from "../functions/rave";
 import { verifyToken } from "../middleware/utils";
 import { prisma, TransactionType } from "../schema/generated/prisma-client";
 import { verifyBank } from "./bank.helper";
 import { interswitchTransfer } from "./interswitch/transfer";
-
+require("dotenv").config();
 // create wallet transaction
 export async function createWalletTransaction(
   walletId: string,
@@ -22,16 +23,59 @@ export async function createWalletTransaction(
     }
   });
 }
+// initiate transaction
+export async function initateTransaction(token: string, amount: number) {
+  // create wallet transaction
+  const { user } = verifyToken(token) as any;
+  if (user === "user") {
+    // get the sender's wallet
+    const wallet = await prisma.wallets({
+      where: {
+        user: {
+          phonenumber: user.phonenumber
+        }
+      }
+    });
+    const transaction = (await prisma.createWalletTransaction({
+      amount: amount,
+      type: "Pending",
+      description: "Transaction initiated",
+      wallet: {
+        connect: {
+          id: wallet[0].id
+        }
+      }
+    })) as any;
 
-export async function walletTransfer(
+    return {
+      transactionReference: transaction.id,
+      amount: transaction.amount,
+      type: transaction.type,
+      description: transaction.description
+    };
+  }
+}
+// wallet to wallet transaction
+export async function walletToWalletTransfer(
   token: string,
   receiverPhone: string,
   amount: number
 ) {
-  const { user } = verifyToken(token) as any;
+  const { user, email } = verifyToken(token) as any;
 
-  // get the wallet of the sender using the phonenumber
+  // if authenticated as user
   if (user === "user") {
+    // ensures the receiver's phone number starts from +234
+    if (receiverPhone.startsWith("0")) {
+      let tel = receiverPhone;
+      receiverPhone = "+234" + tel.substr(1);
+    }
+    // get user
+    const userSender = await prisma.user({
+      email
+    });
+
+    // get sender wallet
     const walletSender = await prisma.wallets({
       where: {
         user: {
@@ -47,7 +91,11 @@ export async function walletTransfer(
         }
       }
     });
-    let userReceiver = await prisma.user({ phonenumber: receiverPhone });
+
+    // get receiver's details
+    const userReceiver = await prisma.user({
+      phonenumber: receiverPhone
+    });
 
     if (walletReceiver === null) {
       return {
@@ -81,7 +129,7 @@ export async function walletTransfer(
       createWalletTransaction(
         walletReceiver[0].id,
         amount,
-        `${amount} transfered from ${user.fullname} `,
+        `${amount} transfered from ${userSender.fullname} `,
         "Credit"
       );
       // update the receiver's wallet with the new amount
@@ -96,67 +144,187 @@ export async function walletTransfer(
     } else {
       return {
         status: `error`,
-        message: `insufficient funds`
+        message: `insufficient funds`,
+        data: "no data available"
       };
     }
   }
   return {
     status: `success`,
-    message: `wallet transfer successful`
+    message: `wallet transfer successful`,
+    data: "no data available"
   };
 }
 
-// initiate wallet transaction
-export async function walletToBank(
+// wallet to bank transaction
+export async function walletToBankTransfer(
   token: string,
   amount: number,
   accountNumber: string,
   bankCode: string
 ) {
   // get user from token
-  const { user, fullname } = verifyToken(token) as any;
+  const { user, email } = verifyToken(token) as any;
   if (user === "user") {
+    const person = await prisma.user({
+      email
+    });
     // get the sender's wallet
-    const walletSender = await prisma.wallets({
+    const wallet = await prisma.wallets({
       where: {
         user: {
           phonenumber: user.phonenumber
         }
       }
     });
-    const us = await prisma.users({
-      where: {
-        phonenumber: user.phonenumber
-      }
-    });
 
-    if (walletSender[0].amount >= amount) {
+    if (wallet[0].amount >= amount) {
       const bank = (await verifyBank(accountNumber, bankCode)) as any;
       let accountName = bank.data.data.accountname;
-      console.log("User" + us);
-
-      const t = (await interswitchTransfer(
+      let transferPrefix = "1413";
+      let transferCode = `${transferPrefix}${getUniqueId()}`;
+      const transferResponse = (await interswitchTransfer(
         accountNumber,
-        accountName,
-        accountName,
+        accountName.split(" ")[0],
+        accountName.split(" ")[1],
         amount,
         bankCode,
-        us[0]
+        transferCode,
+        person
       )) as any;
-      console.log(t);
+      if (
+        transferResponse.responseCode === "90000" &&
+        transferResponse.transferCode === transferCode
+      ) {
+        await createWalletTransaction(
+          wallet[0].id,
+          amount,
+          `${amount} transferred to bank account: ${accountName} `,
+          "Debit"
+        );
+        await prisma.updateWallet({
+          data: {
+            amount: wallet[0].amount - amount
+          },
+          where: {
+            id: wallet[0].id
+          }
+        });
+        return {
+          status: "success",
+          message: "transfer done",
+          data: transferResponse
+        };
+      } else {
+        return {
+          status: "error",
+          message: "error while trying to make this transfer",
+          data: transferResponse
+        };
+      }
     }
   }
 }
 
 // initiate wallet transaction
-export async function fundWallet(
-  token: string,
-  amount: string,
-  accountNumber: string,
-  bankCode: string
-) {
+export async function fundWallet(token: string, transactionReference: string) {
   // get user from token
-  const { user, phonenumber } = verifyToken(token) as any;
+  const { user, email } = verifyToken(token) as any;
   if (user === "user") {
+    // fetch transaction details with wallet_transaction_id
+    const walletTransaction = await prisma.walletTransaction({
+      id: transactionReference
+    });
+
+    // check if transaction exists
+    if (walletTransaction == null) {
+      throw new Error("Transaction does not exist");
+    }
+
+    // verify from Rave
+    const response = (await verify(transactionReference)) as any;
+
+    // if successful update wallet accordingly
+    if (
+      response.body.data.status === "successful" &&
+      response.body.data.chargecode === "00"
+    ) {
+      // query user wallet
+      const wallet = await prisma.wallets({
+        where: {
+          user: {
+            email
+          }
+        }
+      });
+
+      // update wallet transaction
+      await prisma.updateWalletTransaction({
+        data: {
+          amount: response.body.data.amount,
+          type: "Credit",
+          wallet: {
+            connect: {
+              id: wallet[0].id
+            }
+          }
+        },
+        where: {
+          id: transactionReference
+        }
+      });
+
+      // update wallet
+      await prisma.updateWallet({
+        data: {
+          amount: response.body.data.amount + wallet[0].amount
+        },
+        where: {
+          id: wallet[0].id
+        }
+      });
+
+      return {
+        status: "success",
+        message: "successfully funded wallet",
+        data: response.body.data
+      };
+    } else {
+      await prisma.deleteWalletTransaction({
+        id: transactionReference
+      });
+      return {
+        status: "error",
+        message: "error occured while funding wallet",
+        data: response.body.data
+      };
+    }
   }
 }
+
+const getUniqueId = () => {
+  let id = new Date().getTime();
+
+  id += (id + Math.random() * 16) % 16 | 0;
+
+  return id;
+};
+const verify = async (transactionReference: any) => {
+  const unirest = require("unirest");
+  const payload = {
+    SECKEY: process.env.RAVE_SK,
+    txref: transactionReference
+  };
+  const serverUrl = BaseURL() + "/flwv3-pug/getpaidx/api/v2/verify";
+  return new Promise((resolve, reject) => {
+    unirest
+      .post(serverUrl)
+      .headers({
+        "Content-Type": "application/json"
+      })
+      .send(payload)
+      .end(response => {
+        resolve(response);
+      });
+  });
+};

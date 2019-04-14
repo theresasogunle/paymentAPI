@@ -6,8 +6,10 @@ import {
 } from "../src/helpers/user.helpers";
 import {
   createWalletTransaction,
-  walletToBank,
-  walletTransfer
+  fundWallet,
+  initateTransaction,
+  walletToBankTransfer,
+  walletToWalletTransfer
 } from "../src/helpers/wallet.helper";
 import { prisma } from "../src/schema/generated/prisma-client";
 import { destroyUsersTable, destroyWalletTable } from "./functions/users";
@@ -121,7 +123,7 @@ describe("test all wallet functions", () => {
   // wallet to wallet transaction
   test("should do wallet to wallet transaction", async () => {
     const user = await login({ email: data.email, password: "password" });
-    const transfer = await walletTransfer(
+    const transfer = await walletToWalletTransfer(
       user.token,
       receiverData.phonenumber,
       1000
@@ -133,10 +135,32 @@ describe("test all wallet functions", () => {
   // wallet to wallet transaction
   test("should do wallet to bank transaction", async () => {
     const user = await login({ email: data.email, password: "password" });
-    console.log(user.token);
 
-    const transfer = await walletToBank(user.token, 1000, "0690000031", "044");
+    const transfer = await walletToBankTransfer(
+      user.token,
+      1000,
+      "0690000031",
+      "044"
+    );
+    expect(transfer.status).toBe("success");
+  }, 30000);
 
-    console.log(transfer);
+  // initiate transaction
+  test("should initiate wallet transaction", async () => {
+    const user = await login({ email: data.email, password: "password" });
+
+    const transaction = await initateTransaction(user.token, 1000);
+    expect(transaction.amount).toBe(1000);
+  }, 30000);
+
+  // funding wallet error
+  test("should throw error while funding wallet", async () => {
+    const user = await login({ email: data.email, password: "password" });
+    const trans = await initateTransaction(user.token, 1000);
+    const transaction = await fundWallet(
+      user.token,
+      trans.transactionReference
+    );
+    expect(transaction.status).toBe("error");
   }, 30000);
 });

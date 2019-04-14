@@ -15,7 +15,7 @@
         "trailing-comma": false,
         "no-var-requires": false,
         "interface-name": false,
-        "no-console": false,
+        "no-console": true,
         "prefer-const": false,
         "no-empty": false,
         "arrow-parens": false,
