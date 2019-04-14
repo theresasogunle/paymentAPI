@@ -43,6 +43,10 @@ const validateFullName = (fullname: string) => {
 };
 
 export async function authenticateUser(phonenumber: string) {
+  // check if phone number is an actual phone number
+  if (phonenumber.length < 11) {
+    throw new Error("Your phone number is incomplete");
+  }
   // convert phone number to +234 format
   if (phonenumber.startsWith("0")) {
     let tel = phonenumber;
