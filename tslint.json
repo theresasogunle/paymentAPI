@@ -20,7 +20,8 @@
         "no-empty": false,
         "arrow-parens": false,
         "no-shadowed-variable": false,
-        "no-bitwise": false
+        "no-bitwise": false,
+        "object-literal-key-quotes": false
 
     },
     "rulesDirectory": []

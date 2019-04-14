@@ -5,7 +5,8 @@ import {
   verifyUser
 } from "../src/helpers/user.helpers";
 import {
-  walletTransaction,
+  createWalletTransaction,
+  walletToBank,
   walletTransfer
 } from "../src/helpers/wallet.helper";
 import { prisma } from "../src/schema/generated/prisma-client";
@@ -108,7 +109,7 @@ describe("test all wallet functions", () => {
         }
       }
     });
-    const transaction = await walletTransaction(
+    const transaction = await createWalletTransaction(
       wallet[0].id,
       500,
       "test",
@@ -127,5 +128,15 @@ describe("test all wallet functions", () => {
     );
 
     expect(transfer.status).toBe("success");
+  }, 30000);
+
+  // wallet to wallet transaction
+  test("should do wallet to bank transaction", async () => {
+    const user = await login({ email: data.email, password: "password" });
+    console.log(user.token);
+
+    const transfer = await walletToBank(user.token, 1000, "0690000031", "044");
+
+    console.log(transfer);
   }, 30000);
 });

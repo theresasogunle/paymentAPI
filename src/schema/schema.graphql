@@ -1,8 +1,12 @@
 # import User, SignUpInput, SignUpData, LoginUserData, EmailInput, AuthenticateUserData, VerifyUserInput, LoginInput, VerificationDataInput, ChangePasswordInput, UpdatePasswordInput, UpdateProfileInput from './user.graphql'
-#import WalletData,WalletTransferInput from './wallet.graphql'
+# import WalletData,WalletTransferInput from './wallet.graphql'
+# import BankData, VerifyBankInput from './bank.graphql'
 type Query {
   # user query
   authenticateUser(phonenumber: String!): AuthenticateUserData!
+
+  #bank query
+  banks: BankData!
 }
 type Mutation {
   # user mutations
@@ -17,4 +21,7 @@ type Mutation {
 
   #wallet mutations
   walletTransfer(data: WalletTransferInput): WalletData
+
+  #bank mutation
+  verifyBank(data: VerifyBankInput): BankData!
 }

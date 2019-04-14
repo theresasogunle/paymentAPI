@@ -1,0 +1,12 @@
+scalar JSON
+
+type BankData {
+  status: String!
+  message: String!
+  data: JSON!
+}
+
+input VerifyBankInput {
+  accountNumber: String!
+  bankCode: String!
+}

@@ -1,9 +1,10 @@
 import { verifyToken } from "../middleware/utils";
 import { prisma, TransactionType } from "../schema/generated/prisma-client";
-import { interswitchPay } from "./interswitch/payment";
+import { verifyBank } from "./bank.helper";
+import { interswitchTransfer } from "./interswitch/transfer";
 
-// initiate wallet transaction
-export async function walletTransaction(
+// create wallet transaction
+export async function createWalletTransaction(
   walletId: string,
   amount: number,
   description: string,
@@ -57,9 +58,9 @@ export async function walletTransfer(
 
     // if the amount to be transferred is less than the current amount in the wallet
     // throw insufficient funds error, else continue with the transfer process
-    if (walletSender[0].amount > amount) {
+    if (walletSender[0].amount >= amount) {
       // create a debit wallet transaction
-      walletTransaction(
+      createWalletTransaction(
         walletSender[0].id,
         amount,
         `Transfer ${amount} to ${userReceiver.fullname} `,
@@ -77,7 +78,7 @@ export async function walletTransfer(
       });
 
       // create a wallet transaction for crediting the receiver's wallet
-      walletTransaction(
+      createWalletTransaction(
         walletReceiver[0].id,
         amount,
         `${amount} transfered from ${user.fullname} `,
@@ -106,44 +107,56 @@ export async function walletTransfer(
 }
 
 // initiate wallet transaction
-export async function fundWallet(token: string, amount: number) {
+export async function walletToBank(
+  token: string,
+  amount: number,
+  accountNumber: string,
+  bankCode: string
+) {
   // get user from token
-  const { user, phonenumber } = verifyToken(token) as any;
+  const { user, fullname } = verifyToken(token) as any;
   if (user === "user") {
-    await interswitchPay(
-      "5061030000000000084",
-      "1909",
-      "123",
-      "1234",
-      amount,
-      user
-    );
-
-    let wallet = await prisma.wallets({
+    // get the sender's wallet
+    const walletSender = await prisma.wallets({
       where: {
         user: {
-          phonenumber: phonenumber
+          phonenumber: user.phonenumber
         }
       }
     });
-    await walletTransaction(
-      wallet[0].id,
-      amount,
-      `new credit transaction of ${amount} to the wallet`,
-      "Credit"
-    );
-
-    await prisma.updateWallet({
-      data: {
-        amount: wallet[0].amount + amount
-      },
+    const us = await prisma.users({
       where: {
-        id: wallet[0].id
+        phonenumber: user.phonenumber
       }
     });
+
+    if (walletSender[0].amount >= amount) {
+      const bank = (await verifyBank(accountNumber, bankCode)) as any;
+      let accountName = bank.data.data.accountname;
+      console.log("User" + us);
+
+      const t = (await interswitchTransfer(
+        accountNumber,
+        accountName,
+        accountName,
+        amount,
+        bankCode,
+        us[0]
+      )) as any;
+      console.log(t);
+    }
   }
-  return {
-    status: `success`,
-    message: `wallet credited`
-  };
+}
+
+// initiate wallet transaction
+export async function fundWallet(
+  token: string,
+  amount: string,
+  accountNumber: string,
+  bankCode: string
+) {
+  // get user from token
+  const { user, phonenumber } = verifyToken(token) as any;
+  if (user === "user") {
+  }
 }

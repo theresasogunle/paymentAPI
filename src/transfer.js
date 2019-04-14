@@ -1,6 +1,7 @@
 var jwt = require('jsonwebtoken');
 var jsSHA = require('jssha');
 var Interswitch = require('interswitch');
+var Axios = require('axios');
 
 var secret = "XCTiBtLy1G9chAnyg0z3BcaFK4cVpwDg/GTw2EmjTZ8=";
 var clientId = "IKIA9614B82064D632E9B6418DF358A6A4AEA84D7218";
@@ -8,6 +9,98 @@ var access_token = "eyJhbGciOiJSUzI1NiJ9.eyJhdWQiOlsicXVpY2t0ZWxsZXIiLCJxdWlja3R
 
 
 var ENV = "SANDBOX"; // or PRODUCTION
+//get banks
+
+Axios({
+        url: `https://ravesandboxapi.flutterwave.com/flwv3-pug/getpaidx/api/resolve_account`,
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: {
+            recipientaccount: "0690000031",
+            destbankcode: "044",
+            PBFPubKey: "FLWPUBK-f9224b2a0d6d958f24eeb42ad6585f3d-X"
+        }
+    })
+    .then((response) => {
+
+
+        if ((response.data.data.data.responsecode === "NR0")) {
+            console.log("error, can't resolve account");
+
+        } else {
+            let name = response.data.data.data.accountname;
+            let splitName = name.split(' ')[0];
+            console.log(splitName);
+
+            var interswitch = new Interswitch(clientId, secret, ENV);
+            var req1 = {
+                "mac	": "",
+                "beneficiary": {
+                    "lastname": response.data.data.data.accountname,
+                    "othernames": response.data.data.data.accountname
+                },
+                "initiation": {
+                    "amount": 100000,
+                    "channel": 7,
+                    "currencyCode": "566",
+                    "paymentMethodCode": "CA"
+                },
+                "sender": {
+                    "email": "isw@interswitch.com",
+                    "lastname": "Phil colins",
+                    "othernames": "Phil colins",
+                    "phone": "08124888436"
+                },
+                "termination": {
+                    "accountReceivable": {
+                        "accountNumber": "0012000887",
+                        "accountType": 10
+                    },
+                    "amount": 100000,
+                    "countryCode": "NG",
+                    "currencyCode": 566,
+                    "entityCode": "058",
+                    "paymentMethodCode": "AC"
+                },
+                "transferCode": `${1413}${getUniqueId()}`
+            };
+
+            console.log(generateMAC(req1));
+
+            req1.mac = generateMAC(req1);
+
+
+            var obj1 = {
+                url: "api/v2/quickteller/payments/transfers",
+                method: "POST",
+                requestData: req1,
+                httpHeaders: {
+                    "Content-Type": "application/json",
+                }
+            };
+            // send the actual request
+            interswitch.send(obj1, function (err, response, res2) {
+                if (err) {
+                    console.log("err in consumer");
+                    console.log(JSON.stringify(err));
+                } else {
+                    console.log("response was successful");
+                    console.log("bank response " + JSON.stringify(response.body));
+
+
+                }
+            });
+
+        }
+    })
+    .catch(function (error) {
+
+        console.log(error);
+
+    });
+
 
 var getUniqueId = function () {
     var id = new Date().getTime();
@@ -18,95 +111,6 @@ var getUniqueId = function () {
 };
 
 
-var interswitch = new Interswitch(clientId, secret, ENV);
-var req1 = {
-    // "mac	": "e0:94:67:7e:0f:27",
-    "beneficiary": {
-        "lastname": "chi",
-        "othernames": "chi"
-    },
-    "initiation": {
-        "amount": "100000",
-        "channel": "7",
-        "currencyCode": "566",
-        "paymentMethodCode": "CA"
-    },
-    "sender": {
-        "email": "isw@interswitch.com",
-        "lastname": "Phil colins",
-        "othernames": "Phil colins",
-        "phone": "08124888436"
-    },
-    "termination": {
-        "accountReceivable": {
-            "accountNumber": "0012000887",
-            "accountType": "10"
-        },
-        "amount": "100000",
-        "countryCode": "NG",
-        "currencyCode": "566",
-        "entityCode": "058",
-        "paymentMethodCode": "AC"
-    },
-    "transferCode": "1016858652542545"
-};
-
-console.log(generateMAC(req1));
-
-
-var req = {
-    "mac": generateMAC(req1),
-    "beneficiary": {
-        "lastname": "chi",
-        "othernames": "chi"
-    },
-    "initiation": {
-        "amount": "100000",
-        "channel": "7",
-        "currencyCode": "566",
-        "paymentMethodCode": "CA"
-    },
-    "sender": {
-        "email": "isw@interswitch.com",
-        "lastname": "Phil colins",
-        "othernames": "Phil colins",
-        "phone": "08124888436"
-    },
-    "termination": {
-        "accountReceivable": {
-            "accountNumber": "0012000887",
-            "accountType": "10"
-        },
-        "amount": "100000",
-        "countryCode": "NG",
-        "currencyCode": "566",
-        "entityCode": "058",
-        "paymentMethodCode": "AC"
-    },
-    "transferCode": `${1413}${getUniqueId()}`
-};
-
-
-var obj1 = {
-    url: "api/v2/quickteller/payments/transfers",
-    method: "POST",
-    requestData: req,
-    httpHeaders: {
-        "Content-Type": "application/json",
-    }
-};
-// send the actual request
-interswitch.send(obj1, function (err, response, res2) {
-    if (err) {
-        console.log("err in consumer");
-        console.log(JSON.stringify(err));
-    } else {
-        console.log("response was successful");
-        console.log("bank response " + JSON.stringify(response.body));
-
-
-    }
-});
 
 function generateMAC(request) {
 
