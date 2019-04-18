@@ -425,13 +425,14 @@ export type PasswordResetCodeWhereUniqueInput = AtLeastOne<{
 }>;
 
 export interface UserCreateWithoutPasswordResetCodeInput {
+  id?: ID_Input;
   fullname: String;
   DOB: DateTimeInput;
   email: String;
   phonenumber: String;
   password: String;
   profile_picture?: String;
-  transaction_pin: String;
+  transaction_pin?: String;
   gender: Gender;
   verified?: Boolean;
   deleted?: Boolean;
@@ -523,6 +524,7 @@ export interface WalletTransactionScalarWhereInput {
 }
 
 export interface VerificationCodeCreateWithoutUserInput {
+  id?: ID_Input;
   code: Int;
   deleted?: Boolean;
   deletedAt?: DateTimeInput;
@@ -698,6 +700,7 @@ export interface UserWhereInput {
 }
 
 export interface WalletCreateWithoutUserInput {
+  id?: ID_Input;
   amount: Float;
   deleted?: Boolean;
   deletedAt?: DateTimeInput;
@@ -786,6 +789,7 @@ export interface VerificationCodeSubscriptionWhereInput {
 }
 
 export interface WalletTransactionCreateWithoutWalletInput {
+  id?: ID_Input;
   amount: Float;
   type: TransactionType;
   description: String;
@@ -881,6 +885,7 @@ export interface VerificationCodeUpdateWithoutUserDataInput {
 }
 
 export interface WalletTransactionCreateInput {
+  id?: ID_Input;
   amount: Float;
   type: TransactionType;
   description: String;
@@ -975,6 +980,7 @@ export interface WalletTransactionUpdateWithWhereUniqueWithoutWalletInput {
 }
 
 export interface WalletCreateInput {
+  id?: ID_Input;
   amount: Float;
   deleted?: Boolean;
   deletedAt?: DateTimeInput;
@@ -1002,6 +1008,7 @@ export interface WalletTransactionUpsertWithWhereUniqueWithoutWalletInput {
 }
 
 export interface PasswordResetCodeCreateInput {
+  id?: ID_Input;
   code: Int;
   deleted?: Boolean;
   deletedAt?: DateTimeInput;
@@ -1185,6 +1192,7 @@ export interface UserUpsertWithoutPasswordResetCodeInput {
 }
 
 export interface WalletCreateWithoutWallet_transactionsInput {
+  id?: ID_Input;
   amount: Float;
   deleted?: Boolean;
   deletedAt?: DateTimeInput;
@@ -1218,13 +1226,14 @@ export interface UserUpdateOneRequiredWithoutWalletInput {
 }
 
 export interface UserCreateWithoutVerificationCodeInput {
+  id?: ID_Input;
   fullname: String;
   DOB: DateTimeInput;
   email: String;
   phonenumber: String;
   password: String;
   profile_picture?: String;
-  transaction_pin: String;
+  transaction_pin?: String;
   gender: Gender;
   verified?: Boolean;
   deleted?: Boolean;
@@ -1238,13 +1247,14 @@ export type WalletTransactionWhereUniqueInput = AtLeastOne<{
 }>;
 
 export interface UserCreateInput {
+  id?: ID_Input;
   fullname: String;
   DOB: DateTimeInput;
   email: String;
   phonenumber: String;
   password: String;
   profile_picture?: String;
-  transaction_pin: String;
+  transaction_pin?: String;
   gender: Gender;
   verified?: Boolean;
   deleted?: Boolean;
@@ -1326,6 +1336,7 @@ export interface WalletTransactionUpdateManyMutationInput {
 }
 
 export interface PasswordResetCodeCreateWithoutUserInput {
+  id?: ID_Input;
   code: Int;
   deleted?: Boolean;
   deletedAt?: DateTimeInput;
@@ -1353,13 +1364,14 @@ export interface UserUpdateInput {
 }
 
 export interface UserCreateWithoutWalletInput {
+  id?: ID_Input;
   fullname: String;
   DOB: DateTimeInput;
   email: String;
   phonenumber: String;
   password: String;
   profile_picture?: String;
-  transaction_pin: String;
+  transaction_pin?: String;
   gender: Gender;
   verified?: Boolean;
   deleted?: Boolean;
@@ -1383,6 +1395,7 @@ export interface UserCreateOneWithoutPasswordResetCodeInput {
 }
 
 export interface VerificationCodeCreateInput {
+  id?: ID_Input;
   code: Int;
   deleted?: Boolean;
   deletedAt?: DateTimeInput;
@@ -1975,7 +1988,7 @@ export interface User {
   phonenumber: String;
   password: String;
   profile_picture?: String;
-  transaction_pin: String;
+  transaction_pin?: String;
   gender: Gender;
   verified: Boolean;
   deleted: Boolean;
@@ -2134,7 +2147,7 @@ export interface UserPreviousValues {
   phonenumber: String;
   password: String;
   profile_picture?: String;
-  transaction_pin: String;
+  transaction_pin?: String;
   gender: Gender;
   verified: Boolean;
   deleted: Boolean;

@@ -1,73 +1,72 @@
 type User {
-  id: ID! @unique
+  id: ID! @unique @id
   fullname: String!
   DOB: DateTime!
   email: String! @unique
   phonenumber: String! @unique
   password: String!
   profile_picture: String
-  transaction_pin: String!
+  transaction_pin: String
   gender: Gender!
-  verified: Boolean! @default(value: "false")
-  deleted: Boolean! @default(value: "false")
+  verified: Boolean! @default(value: false)
+  deleted: Boolean! @default(value: false)
   deletedAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
   #relationships
-  verificationCode: VerificationCode
-  passwordResetCode: PasswordResetCode
-  wallet: Wallet
+  verificationCode: VerificationCode @relation(link: INLINE)
+  passwordResetCode: PasswordResetCode @relation(link: INLINE)
+  wallet: Wallet @relation(link: INLINE)
 }
 
 # verification code to verify user
 type VerificationCode {
-  id: ID! @unique
+  id: ID! @unique @id
   code: Int!
-  deleted: Boolean! @default(value: "false")
+  deleted: Boolean! @default(value: false)
   deletedAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
   #relationships
   user: User!
 }
 
 # password reset code to reset users password
 type PasswordResetCode {
-  id: ID! @unique
+  id: ID! @unique @id
   code: Int!
-  deleted: Boolean! @default(value: "false")
+  deleted: Boolean! @default(value: false)
   deletedAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
   #relationships
   user: User!
 }
 
 #wallet
 type Wallet {
-  id: ID! @unique
+  id: ID! @unique @id
   amount: Float!
-  deleted: Boolean! @default(value: "false")
+  deleted: Boolean! @default(value: false)
   deletedAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
   #relationships
   user: User!
   wallet_transactions: [WalletTransaction!]!
 }
 
 type WalletTransaction {
-  id: ID! @unique
+  id: ID! @unique @id
   amount: Float!
   type: TransactionType!
   description: String!
-  deleted: Boolean! @default(value: "false")
+  deleted: Boolean! @default(value: false)
   deletedAt: DateTime
-  createdAt: DateTime!
-  updatedAt: DateTime!
-
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
   #relationships
-  wallet: Wallet!
+  wallet: Wallet! @relation(link: INLINE)
 }
 
 enum TransactionType {

@@ -40,8 +40,7 @@ describe("test all users functions", () => {
       phonenumber: "07032190293",
       password: "password",
       gender: "Male",
-      profile_picture: "image",
-      transaction_pin: "1234"
+      profile_picture: "image"
     };
   }, 30000);
 

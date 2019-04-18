@@ -102,6 +102,7 @@ type PasswordResetCodeConnection {
 }
 
 input PasswordResetCodeCreateInput {
+  id: ID
   code: Int!
   deleted: Boolean
   deletedAt: DateTime
@@ -114,6 +115,7 @@ input PasswordResetCodeCreateOneWithoutUserInput {
 }
 
 input PasswordResetCodeCreateWithoutUserInput {
+  id: ID
   code: Int!
   deleted: Boolean
   deletedAt: DateTime
@@ -299,7 +301,7 @@ type User {
   phonenumber: String!
   password: String!
   profile_picture: String
-  transaction_pin: String!
+  transaction_pin: String
   gender: Gender!
   verified: Boolean!
   deleted: Boolean!
@@ -318,13 +320,14 @@ type UserConnection {
 }
 
 input UserCreateInput {
+  id: ID
   fullname: String!
   DOB: DateTime!
   email: String!
   phonenumber: String!
   password: String!
   profile_picture: String
-  transaction_pin: String!
+  transaction_pin: String
   gender: Gender!
   verified: Boolean
   deleted: Boolean
@@ -350,13 +353,14 @@ input UserCreateOneWithoutWalletInput {
 }
 
 input UserCreateWithoutPasswordResetCodeInput {
+  id: ID
   fullname: String!
   DOB: DateTime!
   email: String!
   phonenumber: String!
   password: String!
   profile_picture: String
-  transaction_pin: String!
+  transaction_pin: String
   gender: Gender!
   verified: Boolean
   deleted: Boolean
@@ -366,13 +370,14 @@ input UserCreateWithoutPasswordResetCodeInput {
 }
 
 input UserCreateWithoutVerificationCodeInput {
+  id: ID
   fullname: String!
   DOB: DateTime!
   email: String!
   phonenumber: String!
   password: String!
   profile_picture: String
-  transaction_pin: String!
+  transaction_pin: String
   gender: Gender!
   verified: Boolean
   deleted: Boolean
@@ -382,13 +387,14 @@ input UserCreateWithoutVerificationCodeInput {
 }
 
 input UserCreateWithoutWalletInput {
+  id: ID
   fullname: String!
   DOB: DateTime!
   email: String!
   phonenumber: String!
   password: String!
   profile_picture: String
-  transaction_pin: String!
+  transaction_pin: String
   gender: Gender!
   verified: Boolean
   deleted: Boolean
@@ -441,7 +447,7 @@ type UserPreviousValues {
   phonenumber: String!
   password: String!
   profile_picture: String
-  transaction_pin: String!
+  transaction_pin: String
   gender: Gender!
   verified: Boolean!
   deleted: Boolean!
@@ -753,6 +759,7 @@ type VerificationCodeConnection {
 }
 
 input VerificationCodeCreateInput {
+  id: ID
   code: Int!
   deleted: Boolean
   deletedAt: DateTime
@@ -765,6 +772,7 @@ input VerificationCodeCreateOneWithoutUserInput {
 }
 
 input VerificationCodeCreateWithoutUserInput {
+  id: ID
   code: Int!
   deleted: Boolean
   deletedAt: DateTime
@@ -927,6 +935,7 @@ type WalletConnection {
 }
 
 input WalletCreateInput {
+  id: ID
   amount: Float!
   deleted: Boolean
   deletedAt: DateTime
@@ -945,6 +954,7 @@ input WalletCreateOneWithoutWallet_transactionsInput {
 }
 
 input WalletCreateWithoutUserInput {
+  id: ID
   amount: Float!
   deleted: Boolean
   deletedAt: DateTime
@@ -952,6 +962,7 @@ input WalletCreateWithoutUserInput {
 }
 
 input WalletCreateWithoutWallet_transactionsInput {
+  id: ID
   amount: Float!
   deleted: Boolean
   deletedAt: DateTime
@@ -1024,6 +1035,7 @@ type WalletTransactionConnection {
 }
 
 input WalletTransactionCreateInput {
+  id: ID
   amount: Float!
   type: TransactionType!
   description: String!
@@ -1038,6 +1050,7 @@ input WalletTransactionCreateManyWithoutWalletInput {
 }
 
 input WalletTransactionCreateWithoutWalletInput {
+  id: ID
   amount: Float!
   type: TransactionType!
   description: String!

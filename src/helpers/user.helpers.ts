@@ -22,10 +22,13 @@ const validateEmail = (email: string) => {
   }
 };
 
-const validateTransactionPin = (pin: string) => {
+const validateTransactionPin = (pin: string, repeatPin: string) => {
   const pattern = /^[0-9]*$/gm;
   if (pin.length !== 4) {
     throw new Error("Invalid transaction pin");
+  }
+  if (pin !== repeatPin) {
+    throw new Error("Your pin is not the same");
   }
   if (!pin.match(pattern)) {
     throw new Error("Invalid transaction pin");
@@ -73,7 +76,6 @@ export async function createUser(data: User) {
     DOB,
     password,
     email,
-    transaction_pin,
     phonenumber,
     fullname,
     profile_picture
@@ -83,8 +85,6 @@ export async function createUser(data: User) {
   if (phonenumber.length < 11) {
     throw new Error("Your phone number is incomplete");
   }
-  // validate the transaction pin
-  await validateTransactionPin(transaction_pin);
 
   // validate the geniunity of email address
   await validateEmail(email);
@@ -110,17 +110,22 @@ export async function createUser(data: User) {
   formatDate = new Date(formatDate);
   // hash password
   password = bcrypt.hashSync(password, salt);
-  // hash transaction pin
-  transaction_pin = bcrypt.hashSync(transaction_pin, salt);
 
   // add it back to the data object
   data.DOB = formatDate;
   data.password = password;
-  data.transaction_pin = transaction_pin;
   data.phonenumber = phonenumber;
   const user = await prisma.createUser(data);
 
   return sendVerificationCode(user.email);
+}
+
+export async function setTransactionPin(token:string, transaction_pin: string, repeat_transaction_pin: string) {
+  // validate the transaction pin
+  await validateTransactionPin(transaction_pin, repeat_transaction_pin);
+  // hash transaction pin
+  transaction_pin = bcrypt.hashSync(transaction_pin, salt);
+  
 }
 
 export async function sendVerificationCode(email: string, code?: number) {
