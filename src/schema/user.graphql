@@ -34,12 +34,11 @@ type AuthenticateUserData {
 #inputs
 
 input SignUpInput {
-  fullname: String!
-  transaction_pin: String!
-  DOB: String!
-  email: String!
   phonenumber: String!
+  fullname: String!
+  email: String!
   password: String!
+  DOB: String!
   gender: Gender!
 }
 
