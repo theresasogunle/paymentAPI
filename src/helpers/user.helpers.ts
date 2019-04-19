@@ -64,6 +64,12 @@ export async function authenticateUser(phonenumber: string) {
       status: "register"
     };
   }
+  if (!user.verified) {
+    return {
+      phonenumber,
+      status: "verify"
+    };
+  }
   return {
     phonenumber,
     status: "login"

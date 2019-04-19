@@ -46,7 +46,7 @@ describe("test all users functions", () => {
     };
   }, 30000);
 
-  test("should get a status of register when you authenticate user", async () => {
+  test("should get a status of 'register' when you authenticate user if user is not registered", async () => {
     const user = await authenticateUser(data.phonenumber);
     expect(user.status).toBe("register");
   }, 30000);
@@ -68,6 +68,11 @@ describe("test all users functions", () => {
     delete data.password;
     expect(user.user).toMatchObject(data);
   });
+
+  test("should get a status of 'verify' when you authenticate user if user is registered but not verified", async () => {
+    const user = await authenticateUser(data.phonenumber);
+    expect(user.status).toBe("verify");
+  }, 30000);
 
   test("ensures password is hashed", async () => {
     const user = await prisma.user({ email: data.email });
@@ -112,6 +117,12 @@ describe("test all users functions", () => {
 
     expect(user.verified).toBeTruthy();
   }, 30000);
+
+  test("should get a status of 'login' when you authenticate user if user is registered and verified", async () => {
+    const user = await authenticateUser(data.phonenumber);
+    expect(user.status).toBe("login");
+  }, 30000);
+
   test("should check is wallet is present", async () => {
     let wallet = await prisma.wallets({
       where: {
