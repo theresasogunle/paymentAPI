@@ -58,8 +58,8 @@ input LoginInput {
   password: String!
 }
 
-input EmailInput {
-  email: String!
+input PhoneInput {
+  phonenumber: String!
 }
 
 input UpdatePasswordInput {

@@ -116,7 +116,7 @@ export async function createUser(data: User) {
   data.phonenumber = phonenumber;
   const user = await prisma.createUser(data);
 
-  return sendVerificationCode(user.email);
+  return sendVerificationCode(user.phonenumber);
 }
 
 export async function setTransactionPin(
@@ -130,9 +130,14 @@ export async function setTransactionPin(
   transaction_pin = bcrypt.hashSync(transaction_pin, salt);
 }
 
-export async function sendVerificationCode(email: string, code?: number) {
+export async function sendVerificationCode(phonenumber: string, code?: number) {
+  // convert phone number to +234 format
+  if (phonenumber.startsWith("0")) {
+    let tel = phonenumber;
+    phonenumber = "+234" + tel.substr(1);
+  }
   const user = await prisma.user({
-    email
+    phonenumber
   });
   // check if it has been verified
   if (user.verified) {
@@ -150,7 +155,7 @@ export async function sendVerificationCode(email: string, code?: number) {
   const verificationCodes = await prisma.verificationCodes({
     where: {
       user: {
-        email
+        phonenumber
       }
     }
   });
@@ -169,7 +174,7 @@ export async function sendVerificationCode(email: string, code?: number) {
     code,
     user: {
       connect: {
-        email
+        phonenumber
       }
     }
   });

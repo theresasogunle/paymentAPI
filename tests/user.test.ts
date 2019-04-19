@@ -100,7 +100,7 @@ describe("test all users functions", () => {
   test("should not verify user with incorrect code", async () => {
     try {
       let user = await prisma.user({ email: data.email });
-      await sendVerificationCode(user.email, verificationCode);
+      await sendVerificationCode(user.phonenumber, verificationCode);
       const verifyUserData = await verifyUser(user.phonenumber, 999999);
       user = await prisma.user({ email: data.email });
       expect(verifyUserData).toBeNull();
@@ -111,7 +111,7 @@ describe("test all users functions", () => {
 
   test("should verify user with correct code", async () => {
     let user = await prisma.user({ email: data.email });
-    await sendVerificationCode(user.email, verificationCode);
+    await sendVerificationCode(user.phonenumber, verificationCode);
     await verifyUser(user.phonenumber, verificationCode);
     user = await prisma.user({ email: data.email });
 

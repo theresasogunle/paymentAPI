@@ -18,6 +18,8 @@ const verificationCode = 234367;
 let data;
 let receiverData;
 
+jest.setTimeout(30000);
+
 describe("test all wallet functions", () => {
   beforeAll(() => {
     destroyWalletTable();
