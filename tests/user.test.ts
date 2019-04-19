@@ -20,6 +20,8 @@ const verificationCode = 234567;
 const password1 = "password1";
 const password2 = "password2";
 
+jest.setTimeout(30000);
+
 describe("test all users functions", () => {
   // clear the database after all test runs
   beforeAll(async () => {
@@ -122,7 +124,7 @@ describe("test all users functions", () => {
   }, 30000);
 
   test("should login a user", async () => {
-    const user = await login({ email: data.email, password: data.password });
+    const user = await login({ phonenumber: data.phonenumber, password: data.password });
     expect(Object.keys(user).sort()).toEqual(["token", "user"].sort());
   });
 
@@ -135,21 +137,20 @@ describe("test all users functions", () => {
   }, 30000);
 
   test("should send reset password code", async () => {
-    // tslint:disable-next-line: no-shadowed-variable
     const resetPassword = await sendPasswordResetCode(data.email, 456789);
     expect(resetPassword.status).toBe("successful");
   });
 
   test("should change password on forgot password", async () => {
-    await resetPassword(data.email, 456789, password1);
-    const user = await login({ email: data.email, password: password1 });
+    await resetPassword(data.phonenumber, 456789, password1);
+    const user = await login({ phonenumber: data.phonenumber, password: password1 });
     expect(Object.keys(user).sort()).toEqual(["token", "user"].sort());
   }, 30000);
 
   test("should change password on update password", async () => {
-    const user = await login({ email: data.email, password: password1 });
+    const user = await login({ phonenumber: data.phonenumber, password: password1 });
     await updatePassword(user.token, password1, password2);
-    const userNewPass = await login({ email: data.email, password: password2 });
+    const userNewPass = await login({ phonenumber: data.phonenumber, password: password2 });
     expect(Object.keys(userNewPass).sort()).toEqual(["token", "user"].sort());
   }, 30000);
 });

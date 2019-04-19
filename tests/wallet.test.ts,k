@@ -122,7 +122,7 @@ describe("test all wallet functions", () => {
 
   // wallet to wallet transaction
   test("should do wallet to wallet transaction", async () => {
-    const user = await login({ email: data.email, password: "password" });
+    const user = await login({ phonenumber: data.phonenumber, password: "password" });
     const transfer = await walletToWalletTransfer(
       user.token,
       receiverData.phonenumber,
@@ -134,7 +134,7 @@ describe("test all wallet functions", () => {
 
   // wallet to wallet transaction
   test("should do wallet to bank transaction", async () => {
-    const user = await login({ email: data.email, password: "password" });
+    const user = await login({ phonenumber: data.phonenumber, password: "password" });
 
     const transfer = await walletToBankTransfer(
       user.token,
@@ -147,7 +147,7 @@ describe("test all wallet functions", () => {
 
   // initiate transaction
   test("should initiate wallet transaction", async () => {
-    const user = await login({ email: data.email, password: "password" });
+    const user = await login({ phonenumber: data.phonenumber, password: "password" });
 
     const transaction = await initateTransaction(user.token, 1000);
     expect(transaction.amount).toBe(1000);
@@ -155,7 +155,7 @@ describe("test all wallet functions", () => {
 
   // funding wallet error
   test("should throw error while funding wallet", async () => {
-    const user = await login({ email: data.email, password: "password" });
+    const user = await login({ phonenumber: data.phonenumber, password: "password" });
     const trans = await initateTransaction(user.token, 1000);
     const transaction = await fundWallet(
       user.token,

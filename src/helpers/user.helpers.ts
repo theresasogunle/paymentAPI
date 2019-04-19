@@ -255,14 +255,19 @@ export async function verifyUser(email: string, code?: number) {
 }
 
 interface LoginData {
-  email: string;
+  phonenumber: string;
   password: string;
 }
 
 export async function login(loginData: LoginData) {
-  const { email, password } = loginData;
+  let { phonenumber, password } = loginData;
+  // convert phone number to +234 format
+  if (phonenumber.startsWith("0")) {
+    let tel = phonenumber;
+    phonenumber = "+234" + tel.substr(1);
+  } 
   const user = await prisma.user({
-    email
+    phonenumber
   });
   // if no user
   if (!user) {
@@ -286,6 +291,7 @@ export async function login(loginData: LoginData) {
       {
         id: user.id,
         email: user.email,
+        phonenumber: user.phonenumber,
         user: "user"
       },
       process.env.JWT_SECRET
@@ -353,14 +359,21 @@ export async function sendPasswordResetCode(email: string, code?: number) {
 }
 
 export async function resetPassword(
-  email: string,
+  phonenumber: string,
   code: number,
   password: string
 ) {
+  // convert phone number to +234 format
+  if (phonenumber.startsWith("0")) {
+    let tel = phonenumber;
+    phonenumber = "+234" + tel.substr(1);
+  }
+  console.log(phonenumber);
+  
   const passwordResetCodes = await prisma.passwordResetCodes({
     where: {
       user: {
-        email
+        phonenumber
       }
     }
   });
@@ -382,7 +395,7 @@ export async function resetPassword(
     if (diffMins <= 60) {
       const user = await prisma.updateUser({
         where: {
-          email
+          phonenumber
         },
         data: {
           password: await bcrypt.hashSync(password, salt)
