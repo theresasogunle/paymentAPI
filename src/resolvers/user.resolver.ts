@@ -33,12 +33,12 @@ export default {
       return await login(args.data);
     },
     forgotPassword: async (parent, args, ctx, info) => {
-      const { email } = args.data;
-      return await sendPasswordResetCode(email);
+      const { phonenumber } = args.data;
+      return await sendPasswordResetCode(phonenumber);
     },
     resetPassword: async (parent, args, ctx, info) => {
-      const { email, code, password } = args.data;
-      return await resetPassword(email, code, password);
+      const { phonenumber, code, password } = args.data;
+      return await resetPassword(phonenumber, code, password);
     },
     updatePassword: async (parent, args, ctx, info) => {
       const { oldPassword, newPassword } = args.data;

@@ -148,7 +148,7 @@ describe("test all users functions", () => {
   }, 30000);
 
   test("should send reset password code", async () => {
-    const resetPassword = await sendPasswordResetCode(data.email, 456789);
+    const resetPassword = await sendPasswordResetCode(data.phonenumber, 456789);
     expect(resetPassword.status).toBe("successful");
   });
 

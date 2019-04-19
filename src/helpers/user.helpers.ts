@@ -307,7 +307,12 @@ export async function login(loginData: LoginData) {
   };
 }
 
-export async function sendPasswordResetCode(email: string, code?: number) {
+export async function sendPasswordResetCode(phonenumber: string, code?: number) {
+  // convert phone number to +234 format
+  if (phonenumber.startsWith("0")) {
+    let tel = phonenumber;
+    phonenumber = "+234" + tel.substr(1);
+  }
   if (!code) {
     code = Math.floor(Math.random() * 900000) + 100000;
   }
@@ -318,14 +323,14 @@ export async function sendPasswordResetCode(email: string, code?: number) {
 
   // fetch user
   const user = await prisma.user({
-    email
+    phonenumber
   });
 
   // password reset codes
   const passwordResetCodes = await prisma.passwordResetCodes({
     where: {
       user: {
-        email
+        phonenumber
       }
     }
   });
@@ -344,7 +349,7 @@ export async function sendPasswordResetCode(email: string, code?: number) {
     code,
     user: {
       connect: {
-        email
+        phonenumber
       }
     }
   });
