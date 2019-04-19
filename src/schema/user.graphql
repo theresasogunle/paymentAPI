@@ -54,7 +54,7 @@ input ChangePasswordInput {
 }
 
 input LoginInput {
-  email: String!
+  phonenumber: String!
   password: String!
 }
 
