@@ -72,14 +72,7 @@ export async function authenticateUser(phonenumber: string) {
 
 export async function createUser(data: User) {
   // extract the date of birth and password for modifications
-  let {
-    DOB,
-    password,
-    email,
-    phonenumber,
-    fullname,
-    profile_picture
-  } = data;
+  let { DOB, password, email, phonenumber, fullname, profile_picture } = data;
 
   // check if phone number is an actual phone number
   if (phonenumber.length < 11) {
@@ -120,12 +113,15 @@ export async function createUser(data: User) {
   return sendVerificationCode(user.email);
 }
 
-export async function setTransactionPin(token:string, transaction_pin: string, repeat_transaction_pin: string) {
+export async function setTransactionPin(
+  token: string,
+  transaction_pin: string,
+  repeat_transaction_pin: string
+) {
   // validate the transaction pin
   await validateTransactionPin(transaction_pin, repeat_transaction_pin);
   // hash transaction pin
   transaction_pin = bcrypt.hashSync(transaction_pin, salt);
-  
 }
 
 export async function sendVerificationCode(email: string, code?: number) {
@@ -186,12 +182,18 @@ export async function sendVerificationCode(email: string, code?: number) {
   };
 }
 
-export async function verifyUser(email: string, code?: number) {
+export async function verifyUser(phonenumber: string, code?: number) {
+  // convert phone number to +234 format
+  if (phonenumber.startsWith("0")) {
+    let tel = phonenumber;
+    phonenumber = "+234" + tel.substr(1);
+  }
+
   // check if an activation Code exists before for the user
   const verificationCodes = await prisma.verificationCodes({
     where: {
       user: {
-        email: email
+        phonenumber
       }
     }
   });
@@ -212,7 +214,7 @@ export async function verifyUser(email: string, code?: number) {
       // update the user verified status to true
       await prisma.updateUser({
         where: {
-          email: email
+          phonenumber
         },
         data: {
           verified: true
@@ -223,7 +225,7 @@ export async function verifyUser(email: string, code?: number) {
         amount: 0,
         user: {
           connect: {
-            email
+            phonenumber
           }
         }
       });
@@ -234,7 +236,7 @@ export async function verifyUser(email: string, code?: number) {
       });
 
       const user = await prisma.user({
-        email
+        phonenumber
       });
 
       return {
@@ -265,18 +267,13 @@ export async function login(loginData: LoginData) {
   if (phonenumber.startsWith("0")) {
     let tel = phonenumber;
     phonenumber = "+234" + tel.substr(1);
-  } 
+  }
   const user = await prisma.user({
     phonenumber
   });
   // if no user
   if (!user) {
     throw new Error("Invalid Details");
-  }
-
-  // If not verified
-  if (user.verified === false) {
-    throw new Error("not_verified");
   }
   // Confirm Password
   const valid = await bcrypt.compare(password, user.password);
@@ -368,8 +365,7 @@ export async function resetPassword(
     let tel = phonenumber;
     phonenumber = "+234" + tel.substr(1);
   }
-  console.log(phonenumber);
-  
+
   const passwordResetCodes = await prisma.passwordResetCodes({
     where: {
       user: {

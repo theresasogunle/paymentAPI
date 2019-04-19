@@ -43,7 +43,7 @@ input SignUpInput {
 }
 
 input VerifyUserInput {
-  email: String!
+  phonenumber: String!
   code: Int!
 }
 

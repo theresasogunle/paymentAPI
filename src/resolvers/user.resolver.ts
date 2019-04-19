@@ -22,8 +22,8 @@ export default {
       return await createUser(args.data);
     },
     verifyUser: async (parent, args, ctx, info) => {
-      const { email, code } = args.data;
-      return await verifyUser(email, code);
+      const { phonenumber, code } = args.data;
+      return await verifyUser(phonenumber, code);
     },
     resendVerificationCode: async (parent, args, ctx, info) => {
       const { email } = args.data;
