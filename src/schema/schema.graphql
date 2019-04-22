@@ -5,6 +5,7 @@
 type Query {
   # user query
   authenticateUser(phonenumber: String!): AuthenticateUserData!
+  user: User!
 
   #bank query
   banks: BankData!

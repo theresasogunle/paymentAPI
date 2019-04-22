@@ -431,6 +431,16 @@ export async function resetPassword(
   throw new Error("Wrong password reset code");
 }
 
+export async function user(token: string) {
+  const { id, user } = verifyToken(token) as any;
+  if (user === "user") {
+    return prisma.user({
+      id
+    })
+  }
+  throw new Error("Not Authorized");
+}
+
 export async function updatePassword(
   token: string,
   oldPassword: string,

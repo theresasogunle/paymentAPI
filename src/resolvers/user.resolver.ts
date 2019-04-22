@@ -7,7 +7,8 @@ import {
   sendVerificationCode,
   updatePassword,
   updateProfile,
-  verifyUser
+  verifyUser,
+  user
 } from "../helpers/user.helpers";
 import { getToken } from "../middleware/utils";
 
@@ -15,7 +16,14 @@ export default {
   Query: {
     authenticateUser: async (parent, args, ctx, info) => {
       return await authenticateUser(args.phonenumber);
-    }
+    },
+    user: async(parent, args, ctx, info) => {
+      const token = getToken(ctx);
+      if (!token) {
+        throw new Error("Not Authenticated");
+      }
+      return await user(token);
+    },
   },
   Mutation: {
     signUp: async (parent, args, ctx, info) => {
