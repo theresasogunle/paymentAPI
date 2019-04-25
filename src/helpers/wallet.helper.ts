@@ -281,9 +281,9 @@ export async function walletToBankTransfer(
                 }
               });
               await mail({
-                user: user,
+                user: person,
                 message: `Hi! ${
-                  user.fullname
+                  person.fullname
                 },you have just made a transfer of ${amount}NGN out of your Easpay wallet!`,
                 subject: `New Wallet Transaction`
               });
