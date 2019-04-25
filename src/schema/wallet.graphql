@@ -1,9 +1,34 @@
+# import User from './user.graphql'
+
 # data
 
 type WalletData {
   status: String!
   message: String!
   data: JSON
+}
+
+type Wallet {
+  id: ID!
+  amount: Float!
+  #relationships
+  user: User!
+  wallet_transactions: [WalletTransaction!]!
+}
+
+type WalletTransaction {
+  id: ID!
+  amount: Float!
+  type: TransactionType!
+  description: String!
+  #relationships
+  wallet: Wallet!
+}
+
+enum TransactionType {
+  Debit
+  Credit
+  Pending
 }
 
 type WalletTransactionData {

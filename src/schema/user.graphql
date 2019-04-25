@@ -1,3 +1,5 @@
+# import User from './wallet.graphql'
+
 # data
 
 type User {
@@ -7,12 +9,8 @@ type User {
   email: String!
   phonenumber: String!
   gender: Gender!
-  transaction_pin: String!
   verified: Boolean!
-  deleted: Boolean!
-  deletedAt: String
-  createdAt: String!
-  updatedAt: String!
+  wallet: Wallet
 }
 
 type SignUpData {
@@ -48,7 +46,7 @@ input VerifyUserInput {
 }
 
 input ChangePasswordInput {
-  email: String!
+  phonenumber: String!
   code: Int!
   password: String!
 }
@@ -58,8 +56,8 @@ input LoginInput {
   password: String!
 }
 
-input EmailInput {
-  email: String!
+input PhoneInput {
+  phonenumber: String!
 }
 
 input UpdatePasswordInput {

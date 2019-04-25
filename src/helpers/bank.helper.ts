@@ -5,7 +5,7 @@ import BaseURL from "../functions/rave";
 export async function banks() {
   return new Promise((resolve, reject) => {
     // rave url
-    Axios.get(`${BaseURL()}/v2/banks/NG?public_key=${process.env.RAVE_PK}`)
+    Axios.get(`${BaseURL()}/v2/banks/NG?public_key=FLWPUBK-9b658dd72a5dfeec4d9db80b46e214e4-X`)
       .then(response => {
         // handle success
         resolve({

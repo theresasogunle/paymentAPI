@@ -116,7 +116,7 @@ export async function createUser(data: User) {
   data.phonenumber = phonenumber;
   const user = await prisma.createUser(data);
 
-  return sendVerificationCode(user.email);
+  return sendVerificationCode(user.phonenumber);
 }
 
 export async function setTransactionPin(
@@ -131,9 +131,14 @@ export async function setTransactionPin(
   transaction_pin = bcrypt.hashSync(transaction_pin, salt);
 }
 
-export async function sendVerificationCode(email: string, code?: number) {
+export async function sendVerificationCode(phonenumber: string, code?: number) {
+  // convert phone number to +234 format
+  if (phonenumber.startsWith("0")) {
+    let tel = phonenumber;
+    phonenumber = "+234" + tel.substr(1);
+  }
   const user = await prisma.user({
-    email
+    phonenumber
   });
   // check if it has been verified
   if (user.verified) {
@@ -151,7 +156,7 @@ export async function sendVerificationCode(email: string, code?: number) {
   const verificationCodes = await prisma.verificationCodes({
     where: {
       user: {
-        email
+        phonenumber
       }
     }
   });
@@ -170,7 +175,7 @@ export async function sendVerificationCode(email: string, code?: number) {
     code,
     user: {
       connect: {
-        email
+        phonenumber
       }
     }
   });
@@ -303,7 +308,12 @@ export async function login(loginData: LoginData) {
   };
 }
 
-export async function sendPasswordResetCode(email: string, code?: number) {
+export async function sendPasswordResetCode(phonenumber: string, code?: number) {
+  // convert phone number to +234 format
+  if (phonenumber.startsWith("0")) {
+    let tel = phonenumber;
+    phonenumber = "+234" + tel.substr(1);
+  }
   if (!code) {
     code = Math.floor(Math.random() * 900000) + 100000;
   }
@@ -314,14 +324,14 @@ export async function sendPasswordResetCode(email: string, code?: number) {
 
   // fetch user
   const user = await prisma.user({
-    email
+    phonenumber
   });
 
   // password reset codes
   const passwordResetCodes = await prisma.passwordResetCodes({
     where: {
       user: {
-        email
+        phonenumber
       }
     }
   });
@@ -340,7 +350,7 @@ export async function sendPasswordResetCode(email: string, code?: number) {
     code,
     user: {
       connect: {
-        email
+        phonenumber
       }
     }
   });
@@ -420,6 +430,16 @@ export async function resetPassword(
     throw new Error("Password reset code expired");
   }
   throw new Error("Wrong password reset code");
+}
+
+export async function user(token: string) {
+  const { id, user } = verifyToken(token) as any;
+  if (user === "user") {
+    return prisma.user({
+      id
+    })
+  }
+  throw new Error("Not Authorized");
 }
 
 export async function updatePassword(

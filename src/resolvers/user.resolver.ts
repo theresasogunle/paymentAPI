@@ -7,15 +7,24 @@ import {
   sendVerificationCode,
   updatePassword,
   updateProfile,
-  verifyUser
+  verifyUser,
+  user
 } from "../helpers/user.helpers";
 import { getToken } from "../middleware/utils";
+import { prisma } from "../schema/generated/prisma-client";
 
 export default {
   Query: {
     authenticateUser: async (parent, args, ctx, info) => {
       return await authenticateUser(args.phonenumber);
-    }
+    },
+    user: async(parent, args, ctx, info) => {
+      const token = getToken(ctx);
+      if (!token) {
+        throw new Error("Not Authenticated");
+      }
+      return await user(token);
+    },
   },
   Mutation: {
     signUp: async (parent, args, ctx, info) => {
@@ -26,19 +35,19 @@ export default {
       return await verifyUser(phonenumber, code);
     },
     resendVerificationCode: async (parent, args, ctx, info) => {
-      const { email } = args.data;
-      return await sendVerificationCode(email);
+      const { phonenumber } = args.data;
+      return await sendVerificationCode(phonenumber);
     },
     loginUser: async (parent, args, ctx, info) => {
       return await login(args.data);
     },
     forgotPassword: async (parent, args, ctx, info) => {
-      const { email } = args.data;
-      return await sendPasswordResetCode(email);
+      const { phonenumber } = args.data;
+      return await sendPasswordResetCode(phonenumber);
     },
     resetPassword: async (parent, args, ctx, info) => {
-      const { email, code, password } = args.data;
-      return await resetPassword(email, code, password);
+      const { phonenumber, code, password } = args.data;
+      return await resetPassword(phonenumber, code, password);
     },
     updatePassword: async (parent, args, ctx, info) => {
       const { oldPassword, newPassword } = args.data;
@@ -55,6 +64,18 @@ export default {
         throw new Error("Not Authenticated");
       }
       return await updateProfile(token, fullname, gender);
+    }
+  },
+  User: {
+    wallet: async (parent, args, ctx, info) => {
+      const wallets = await prisma.wallets({
+        where: {
+          user: {
+            id: parent.id
+          }
+        }
+      })
+      return wallets[0]
     }
   }
 };
