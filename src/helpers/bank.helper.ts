@@ -33,7 +33,7 @@ export const verifyBank = async (accountNumber: string, bankCode: string) => {
       data: {
         recipientaccount: accountNumber,
         destbankcode: bankCode,
-        PBFPubKey: process.env.RAVE_PK
+        PBFPubKey: 'FLWPUBK-9b658dd72a5dfeec4d9db80b46e214e4-X'
       }
     })
       .then(response => {

@@ -1,17 +1,27 @@
 # import User, SignUpInput, SignUpData, LoginUserData, PhoneInput, AuthenticateUserData, VerifyUserInput, LoginInput, VerificationDataInput, ChangePasswordInput, UpdatePasswordInput, UpdateProfileInput from './user.graphql'
+<<<<<<< HEAD
 # import WalletData,WalletToWalletTransferInput, WalletToBankTransferInput, InitiateTransactionInput, FundWalletInput, WalletTransactionData, InitiateTransactionData from './wallet.graphql'
 # import BankData, VerifyBankInput from './bank.graphql'
+=======
+# import WalletData,WalletToWalletTransferInput, WalletToBankTransferInput, InitiateTransactionInput, FundWalletInput, WalletTransactionData from './wallet.graphql'
+# import BankData, BankDetailsInput from './bank.graphql'
+>>>>>>> 8c0fc4d0d53f962d06de97aa6497b0547d59e638
 
 type Query {
   # user query
   authenticateUser(phonenumber: String!): AuthenticateUserData!
   user: User!
+  getEasPayUserDetails(phonenumber: String!): User!
 
   #bank query
   banks: BankData!
+<<<<<<< HEAD
 
   #transaction details query
   getTransactionDetails(transactionReference: String!): WalletTransactionData!
+=======
+  getBankDetails(data: BankDetailsInput): BankData!
+>>>>>>> 8c0fc4d0d53f962d06de97aa6497b0547d59e638
 }
 type Mutation {
   # user mutations
@@ -25,6 +35,7 @@ type Mutation {
   updateProfile(data: UpdateProfileInput): LoginUserData!
 
   #wallet mutations
+<<<<<<< HEAD
   walletToWalletTransfer(
     data: WalletToWalletTransferInput
   ): WalletTransactionData
@@ -34,4 +45,10 @@ type Mutation {
 
   #bank mutation
   verifyBank(data: VerifyBankInput): BankData!
+=======
+  walletToWalletTransfer(data: WalletToWalletTransferInput): WalletData
+  walletToBankTransfer(data: WalletToBankTransferInput): WalletData
+  fundWallet(data: FundWalletInput): WalletData
+  initiateTransaction(data: InitiateTransactionInput): WalletTransactionData
+>>>>>>> 8c0fc4d0d53f962d06de97aa6497b0547d59e638
 }

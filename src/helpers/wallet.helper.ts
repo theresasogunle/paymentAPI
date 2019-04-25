@@ -232,7 +232,7 @@ export async function walletToBankTransfer(
     const wallet = await prisma.wallets({
       where: {
         user: {
-          phonenumber: user.phonenumber
+          email
         }
       }
     });

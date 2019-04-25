@@ -121,7 +121,7 @@ export async function createUser(data: User) {
 
 export async function setTransactionPin(
   token: string,
-// tslint:disable-next-line: variable-name
+  // tslint:disable-next-line: variable-name
   transaction_pin: string,
   repeat_transaction_pin: string
 ) {
@@ -308,7 +308,10 @@ export async function login(loginData: LoginData) {
   };
 }
 
-export async function sendPasswordResetCode(phonenumber: string, code?: number) {
+export async function sendPasswordResetCode(
+  phonenumber: string,
+  code?: number
+) {
   // convert phone number to +234 format
   if (phonenumber.startsWith("0")) {
     let tel = phonenumber;
@@ -432,12 +435,27 @@ export async function resetPassword(
   throw new Error("Wrong password reset code");
 }
 
-export async function user(token: string) {
-  const { id, user } = verifyToken(token) as any;
-  if (user === "user") {
+export async function user(token?: string, phonenumber?: string) {
+  if (token) {
+    const { id, user } = verifyToken(token) as any;
+    if (user === "user") {
+      return prisma.user({
+        id
+      });
+    }
+    throw new Error("Not Authorized");
+  } else if (phonenumber) {
+    if (phonenumber.length < 11) {
+      throw new Error("Your phone number is incomplete");
+    }
+    // convert phone number to +234 format
+    if (phonenumber.startsWith("0")) {
+      let tel = phonenumber;
+      phonenumber = "+234" + tel.substr(1);
+    }
     return prisma.user({
-      id
-    })
+      phonenumber
+    });
   }
   throw new Error("Not Authorized");
 }
