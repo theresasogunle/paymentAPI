@@ -11,6 +11,7 @@ import {
   user
 } from "../helpers/user.helpers";
 import { getToken } from "../middleware/utils";
+import { prisma } from "../schema/generated/prisma-client";
 
 export default {
   Query: {
@@ -63,6 +64,18 @@ export default {
         throw new Error("Not Authenticated");
       }
       return await updateProfile(token, fullname, gender);
+    }
+  },
+  User: {
+    wallet: async (parent, args, ctx, info) => {
+      const wallets = await prisma.wallets({
+        where: {
+          user: {
+            id: parent.id
+          }
+        }
+      })
+      return wallets[0]
     }
   }
 };
