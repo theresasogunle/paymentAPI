@@ -13,7 +13,7 @@ import {
 import { prisma } from "../src/schema/generated/prisma-client";
 import { destroyUsersTable, destroyWalletTable } from "./functions/users";
 const dateFormat = require("dateformat");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcryptjs");   
 
 let data;
 const verificationCode = 234567;
