@@ -6,7 +6,7 @@ type BankData {
   data: JSON!
 }
 
-input VerifyBankInput {
+input BankDetailsInput {
   accountNumber: String!
   bankCode: String!
 }
