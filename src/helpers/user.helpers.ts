@@ -121,6 +121,7 @@ export async function createUser(data: User) {
 
 export async function setTransactionPin(
   token: string,
+// tslint:disable-next-line: variable-name
   transaction_pin: string,
   repeat_transaction_pin: string
 ) {
