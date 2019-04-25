@@ -1,5 +1,6 @@
 import {
   fundWallet,
+  getTransactionDetails,
   initateTransaction,
   walletToBankTransfer,
   walletToWalletTransfer
@@ -7,6 +8,16 @@ import {
 import { getToken } from "../middleware/utils";
 
 export default {
+  Query: {
+    getTransactionDetails: async (parent, args, ctx, info) => {
+      const token = getToken(ctx);
+      if (!token) {
+        throw new Error("Not Authenticated");
+      }
+
+      return await getTransactionDetails(token, args.transactionReference);
+    }
+  },
   Mutation: {
     walletToWalletTransfer: async (parent, args, ctx, info) => {
       const token = getToken(ctx);

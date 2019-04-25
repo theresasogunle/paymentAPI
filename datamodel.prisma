@@ -60,7 +60,12 @@ type WalletTransaction {
   id: ID! @unique @id
   amount: Float!
   type: TransactionType!
+  medium: PaymentMedium
+  mediumName: String
+  mediumNumber: String
   description: String!
+  fee: Float @default(value: 0)
+  total: Float
   deleted: Boolean! @default(value: false)
   deletedAt: DateTime
   createdAt: DateTime! @createdAt
@@ -78,4 +83,10 @@ enum TransactionType {
 enum Gender {
   Male
   Female
+}
+
+enum PaymentMedium {
+  Easpay
+  Bank
+  Card
 }

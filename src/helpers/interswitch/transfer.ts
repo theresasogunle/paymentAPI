@@ -51,6 +51,7 @@ export const interswitchTransfer = async (
       "Content-Type": "application/json"
     }
   };
+
   // send the actual request
   return new Promise((resolve, reject) => {
     interswitch.send(obj, (err, response, body) => {
@@ -59,6 +60,8 @@ export const interswitchTransfer = async (
         console.log("err in consumer");
         // tslint:disable-next-line: no-console
         console.log(JSON.stringify(err));
+        console.log("Response : " + response);
+
         reject(err);
       } else {
         // tslint:disable-next-line: no-console

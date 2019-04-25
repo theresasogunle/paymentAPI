@@ -8,6 +8,14 @@ type WalletData {
   data: JSON
 }
 
+type InitiateTransactionData {
+  status: String!
+  transactionReference: String!
+  amount: Float
+  type: TransactionType
+  description: String!
+}
+
 type Wallet {
   id: ID!
   amount: Float!
@@ -33,9 +41,14 @@ enum TransactionType {
 
 type WalletTransactionData {
   amount: Float!
-  transactionReference: String!
-  type: TransactionType!
-  description: String!
+  transactionReference: String
+  total: Float
+  fee: Float
+  medium: PaymentMedium
+  mediumName: String
+  mediumNumber: String
+  status: String
+  data: JSON
 }
 
 input WalletToWalletTransferInput {
@@ -60,4 +73,10 @@ enum TransactionType {
   Credit
   Debit
   Pending
+}
+
+enum PaymentMedium {
+  Easpay
+  Card
+  Bank
 }

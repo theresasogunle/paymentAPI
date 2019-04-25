@@ -21,5 +21,6 @@ const options = {
 
 // start the server
 server.start(options, ({ port }) =>
+// tslint:disable-next-line: no-console
   console.log(`Server is running on http://localhost:${port}`)
 );
