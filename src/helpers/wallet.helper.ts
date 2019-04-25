@@ -173,7 +173,7 @@ export async function walletToBankTransfer(
     const wallet = await prisma.wallets({
       where: {
         user: {
-          phonenumber: user.phonenumber
+          email
         }
       }
     });
@@ -183,6 +183,14 @@ export async function walletToBankTransfer(
       let accountName = bank.data.data.accountname;
       let transferPrefix = "1413";
       let transferCode = `${transferPrefix}${getUniqueId()}`;
+      console.log(accountNumber,
+        accountName.split(" ")[0],
+        accountName.split(" ")[1],
+        amount,
+        bankCode,
+        transferCode,
+        person);
+      
       const transferResponse = (await interswitchTransfer(
         accountNumber,
         accountName.split(" ")[0],

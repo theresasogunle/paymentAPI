@@ -25,6 +25,9 @@ export default {
       }
       return await user(token);
     },
+    getEasPayUserDetails: async(parent, args, ctx, info) => {
+      return await user(null, args.phonenumber);
+    },
   },
   Mutation: {
     signUp: async (parent, args, ctx, info) => {

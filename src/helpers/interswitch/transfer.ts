@@ -24,8 +24,8 @@ export const interswitchTransfer = async (
     },
     sender: {
       email: senderUser.email,
-      lastname: senderUser.fullname.split(" ")[0],
-      othernames: senderUser.fullname.split(" ")[1],
+      lastname: senderUser.fullname.split(" ")[1],
+      othernames: senderUser.fullname.split(" ")[0],
       phone: senderUser.phonenumber
     },
     termination: {
