@@ -185,7 +185,7 @@ export async function walletToWalletTransfer(
       await mail({
         user: userReceiver,
         message: `Hi! ${userReceiver.fullname},${
-          userReceiver.fullname
+          userSender.fullname
         } just sent  ${amount}NGN  to your Easpay wallet!`,
         subject: `New Wallet Transaction`
       });
@@ -318,15 +318,6 @@ export async function walletToBankTransfer(
             reject(err);
           });
       });
-
-      // const trans = (await raveTransfer(
-      //   bankCode,
-      //   accountNumber,
-      //   transferCodeRave,
-      //   amount,
-      //   bank.data.data.accountname
-      // )) as any;
-      // console.log("Transaction Response " + trans);
 
       // let transferPrefix = "1413";
       // let transferCode = `${transferPrefix}${getUniqueId()}`;
