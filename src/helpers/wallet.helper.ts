@@ -152,7 +152,7 @@ export async function walletToWalletTransfer(
       });
 
       // create a wallet transaction for crediting the receiver's wallet
-      await createWalletTransaction(
+      const transaction =await createWalletTransaction(
         walletReceiver[0].id,
         amount,
         `${amount} transfered from ${userSender.fullname} `,
@@ -191,6 +191,7 @@ export async function walletToWalletTransfer(
       });
       return {
         amount: amount,
+        transactionReference: transaction.id,
         total: amount + fee,
         fee: fee,
         medium: `Easpay`,
@@ -201,16 +202,7 @@ export async function walletToWalletTransfer(
         message: `wallet transfer successful`
       };
     } else {
-      return {
-        amount: amount,
-        total: amount + fee,
-        fee: fee,
-        mediumName: `Easpay Wallet`,
-        medium: `Easpay`,
-        status: `error`,
-        data: `No data available`,
-        message: `wallet transfer failed`
-      };
+      throw new Error("insufficient funds")
     }
   }
 }
