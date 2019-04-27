@@ -26,23 +26,42 @@ export async function createWalletTransaction(
   total: number,
   fee: number
 ) {
+  // first initiate the transaction
+  const initiatedTransaction = (await initate(walletId, amount)) as any;
   // create wallet transaction
-  return await prisma.createWalletTransaction({
+  console.log(initiatedTransaction);
+
+  return await prisma.updateWalletTransaction({
+    where: {
+      id: initiatedTransaction.id
+    },
+    data: {
+      type: transactionType,
+      description: description,
+      medium: medium,
+      mediumName: mediumName,
+      mediumNumber: mediumNumber,
+      total: total,
+      fee: fee,
+      transactionReference: initiatedTransaction.id
+    }
+  });
+}
+
+// initiate transaction
+export async function initate(walletId: string, amount: number) {
+  return (await prisma.createWalletTransaction({
     amount: amount,
-    type: transactionType,
-    description: description,
+    type: "Pending",
+    description: "Transaction initiated",
     wallet: {
       connect: {
         id: walletId
       }
-    },
-    medium: medium,
-    mediumName: mediumName,
-    mediumNumber: mediumNumber,
-    total: total,
-    fee: fee
-  });
+    }
+  })) as any;
 }
+
 // initiate transaction
 export async function initateTransaction(token: string, amount: number) {
   // create wallet transaction
@@ -100,7 +119,7 @@ export async function walletToWalletTransfer(
     const walletSender = await prisma.wallets({
       where: {
         user: {
-          phonenumber: user.phonenumber
+          phonenumber: userSender.phonenumber
         }
       }
     });
@@ -112,6 +131,7 @@ export async function walletToWalletTransfer(
         }
       }
     });
+    console.log(walletSender);
 
     // get receiver's details
     const userReceiver = await prisma.user({
@@ -129,7 +149,7 @@ export async function walletToWalletTransfer(
     // throw insufficient funds error, else continue with the transfer process
     if (walletSender[0].amount >= amount) {
       // create a debit wallet transaction
-      createWalletTransaction(
+      const transId = await createWalletTransaction(
         walletSender[0].id,
         amount,
         `Transfer ${amount} to ${userReceiver.fullname} `,
@@ -193,6 +213,9 @@ export async function walletToWalletTransfer(
         amount: amount,
         total: amount + fee,
         fee: fee,
+        type: `Debit`,
+        transactionReference: transId.transactionReference,
+        description: `${amount} transfered to ${userReceiver.fullname} `,
         medium: `Easpay`,
         mediumNumber: userSender.phonenumber,
         mediumName: `Easpay Wallet`,
@@ -202,9 +225,6 @@ export async function walletToWalletTransfer(
       };
     } else {
       return {
-        amount: amount,
-        total: amount + fee,
-        fee: fee,
         mediumName: `Easpay Wallet`,
         medium: `Easpay`,
         status: `error`,
@@ -241,143 +261,70 @@ export async function walletToBankTransfer(
       let transferCodeRave = `${getUniqueId()}`;
       const bank = (await verifyBank(accountNumber, bankCode)) as any;
       let accountName = bank.data.data.accountname;
-      return new Promise((resolve, reject) => {
-        Axios({
-          url: BaseURL() + "/v2/gpx/transfers/create",
-          method: "post",
-          headers: {
-            "Content-Type": "application/json"
-          },
+
+      let transferPrefix = "1413";
+      let transferCode = `${transferPrefix}${getUniqueId()}`;
+      const transferResponse = (await interswitchTransfer(
+        accountNumber,
+        accountName.split(" ")[0],
+        accountName.split(" ")[1],
+        amount,
+        bankCode,
+        transferCode,
+        person
+      )) as any;
+
+      if (
+        transferResponse.responseCode === "90000" &&
+        transferResponse.transferCode === transferCode
+      ) {
+        await createWalletTransaction(
+          wallet[0].id,
+          amount,
+          `${amount} transferred to bank account: ${accountName} `,
+          "Debit",
+          `Easpay`,
+          `Easpay Wallet`,
+          person.phonenumber,
+          amount + fee,
+          fee
+        );
+        await prisma.updateWallet({
           data: {
-            account_bank: bankCode,
-            account_number: accountNumber,
-            narration: `Transfer to to ${accountName} .`,
-            currency: "NGN",
-            seckey: process.env.RAVE_SK,
-            reference: "TXR_deatt_" + transferCodeRave + "-Y",
-            amount: amount,
-            beneficiary_name: accountName
+            amount: wallet[0].amount - amount
+          },
+          where: {
+            id: wallet[0].id
           }
-        })
-          .then(async response => {
-            if (response.data.status === "success") {
-              await createWalletTransaction(
-                wallet[0].id,
-                amount,
-                `${amount} transferred to bank account: ${accountName} `,
-                "Debit",
-                `Easpay`,
-                `Easpay Wallet`,
-                person.phonenumber,
-                amount + fee,
-                fee
-              );
-              await prisma.updateWallet({
-                data: {
-                  amount: wallet[0].amount - amount
-                },
-                where: {
-                  id: wallet[0].id
-                }
-              });
-              await mail({
-                user: person,
-                message: `Hi! ${
-                  person.fullname
-                },you have just made a transfer of ${amount}NGN out of your Easpay wallet!`,
-                subject: `New Wallet Transaction`
-              });
-
-              resolve({
-                amount: response.data.data.amount,
-                transactionReference: transferCodeRave,
-                total: response.data.data.amount + fee,
-                fee: fee,
-                medium: "Easpay",
-                mediumName: `Easpay Wallet`,
-                mediumNumber: person.phonenumber,
-                status: `success`,
-                message: `wallet transfer successful`,
-                data: response.data.data
-              });
-            } else {
-              resolve({
-                amount: amount,
-                total: amount + fee,
-                fee: fee,
-                medium: `Easpay`,
-                mediumName: `Easpay Wallet`,
-                mediumNumber: person.phonenumber,
-                status: `error`,
-                message: `error while trying to make this transfer`,
-                data: response.data.data
-              });
-            }
-          })
-          .catch(function(err) {
-            reject(err);
-          });
-      });
-
-      // let transferPrefix = "1413";
-      // let transferCode = `${transferPrefix}${getUniqueId()}`;
-      // const transferResponse = (await interswitchTransfer(
-      //   accountNumber,
-      //   accountName.split(" ")[0],
-      //   accountName.split(" ")[1],
-      //   amount,
-      //   bankCode,
-      //   transferCode,
-      //   person
-      // )) as any;
-      // if (
-      //   transferResponse.responseCode === "90000" &&
-      //   transferResponse.transferCode === transferCode
-      // ) {
-      //   await createWalletTransaction(
-      //     wallet[0].id,
-      //     amount,
-      //     `${amount} transferred to bank account: ${accountName} `,
-      //     "Debit",
-      //     `Easpay`,
-      //     `Easpay Wallet`,
-      //     person.phonenumber,
-      //     amount + fee,
-      //     fee
-      //   );
-      //   await prisma.updateWallet({
-      //     data: {
-      //       amount: wallet[0].amount - amount
-      //     },
-      //     where: {
-      //       id: wallet[0].id
-      //     }
-      //   });
-      //   return {
-      //     amount: amount,
-      //     transactionReference: null,
-      //     total: amount + fee,
-      //     fee: fee,
-      //     medium: `Easpay`,
-      //     mediumName: `Easpay Wallet`,
-      //     mediumNumber: person.phonenumber,
-      //     status: `success`,
-      //     message: `wallet transfer successful`,
-      //     data: transferResponse
-      //   };
-      // } else {
-      //   return {
-      //     amount: amount,
-      //     total: amount + fee,
-      //     fee: fee,
-      //     medium: `Easpay`,
-      //     mediumName: `Easpay Wallet`,
-      //     mediumNumber: person.phonenumber,
-      //     status: `error`,
-      //     message: `error while trying to make this transfer`,
-      //     data: transferResponse
-      //   };
-      // }
+        });
+        return {
+          amount: amount,
+          transactionReference: transferCode,
+          total: amount + fee,
+          fee: fee,
+          type: `Debit`,
+          description: `${amount} transferred to bank account: ${accountName} `,
+          medium: `Easpay`,
+          mediumName: `Easpay Wallet`,
+          mediumNumber: person.phonenumber,
+          status: `success`,
+          message: `wallet transfer successful`,
+          data: transferResponse
+        };
+      } else {
+        return {
+          amount: amount,
+          total: amount + fee,
+          fee: fee,
+          type: `Debit`,
+          medium: `Easpay`,
+          mediumName: `Easpay Wallet`,
+          mediumNumber: person.phonenumber,
+          status: `error`,
+          message: `error while trying to make this transfer`,
+          data: transferResponse
+        };
+      }
     } else {
       throw new Error("insufficient balance");
     }
@@ -443,6 +390,9 @@ export async function fundWallet(token: string, transactionReference: string) {
               }
             },
             medium: "Bank",
+            description: `Funded wallet through bank account : ${
+              bankName.name
+            }`,
             mediumNumber: response.body.data.account.account_number,
             mediumName: bankName.name,
             fee: fee,
@@ -477,6 +427,8 @@ export async function fundWallet(token: string, transactionReference: string) {
           transactionReference: transactionReference,
           total: response.body.data.amount + fee,
           fee: fee,
+          type: `Credit`,
+          description: `Funded wallet from ${bankName.name}`,
           medium: "Bank",
           mediumNumber: response.body.data.account.account_number,
           mediumName: bankName.name,
@@ -495,9 +447,12 @@ export async function fundWallet(token: string, transactionReference: string) {
                 id: wallet[0].id
               }
             },
-            medium: "Bank",
+            medium: "Card",
+            description: `Funded wallet through bank account : ${
+              response.body.data.card.type
+            } CARD`,
             mediumNumber: response.body.data.card.last4digits,
-            mediumName: response.body.data.type,
+            mediumName: response.body.data.card.type,
             fee: fee,
             total: response.body.data.amount + fee
           },
@@ -529,6 +484,9 @@ export async function fundWallet(token: string, transactionReference: string) {
           transactionReference: transactionReference,
           total: response.body.data.amount + fee,
           fee: fee,
+          description: `Funded wallet through bank account : ${
+            response.body.data.card.type
+          } CARD`,
           medium: "Card",
           mediumNumber: response.body.data.card.last4digits,
           mediumName: response.body.data.card.type,
@@ -571,9 +529,11 @@ export async function getTransactionDetails(
 
     return {
       amount: walletTransaction.amount,
-      transactionReference: walletTransaction.id,
+      type: walletTransaction.type,
+      transactionReference: walletTransaction.transactionReference,
       total: walletTransaction.total,
       fee: walletTransaction.fee,
+      description: walletTransaction.description,
       medium: walletTransaction.medium,
       mediumName: walletTransaction.mediumName,
       mediumNumber: walletTransaction.mediumNumber,
@@ -582,6 +542,47 @@ export async function getTransactionDetails(
     };
   }
 }
+
+export async function transactionHistory(token: string) {
+  const { user, email } = verifyToken(token) as any;
+  if (user === "user") {
+    // get the user's wallet
+    const wallet = await prisma.wallets({
+      where: {
+        user: {
+          email
+        }
+      }
+    });
+    // fetch transaction details with wallet_transaction_id
+    const transaction = await prisma.walletTransactions({
+      where: {
+        wallet: {
+          id: wallet[0].id
+        }
+      },
+      orderBy: "createdAt_DESC"
+    });
+
+    return transaction.map(data => {
+      return {
+        amount: data.amount,
+        type: data.type,
+        description: data.description,
+        transactionReference: data.id,
+        total: data.total,
+        fee: data.fee,
+
+        medium: data.medium,
+        mediumName: data.mediumName,
+        mediumNumber: data.mediumNumber,
+        status: "success",
+        message: "transaction fetched"
+      };
+    });
+  }
+}
+
 const getUniqueId = () => {
   let id = new Date().getTime();
 
@@ -589,6 +590,7 @@ const getUniqueId = () => {
 
   return id;
 };
+
 const verify = async (transactionReference: any) => {
   const unirest = require("unirest");
   const payload = {

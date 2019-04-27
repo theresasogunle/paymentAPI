@@ -1011,6 +1011,7 @@ type WalletTransaction {
   id: ID!
   amount: Float!
   type: TransactionType!
+  transactionReference: String
   medium: PaymentMedium
   mediumName: String
   mediumNumber: String
@@ -1033,6 +1034,7 @@ type WalletTransactionConnection {
 input WalletTransactionCreateInput {
   amount: Float!
   type: TransactionType!
+  transactionReference: String
   medium: PaymentMedium
   mediumName: String
   mediumNumber: String
@@ -1052,6 +1054,7 @@ input WalletTransactionCreateManyWithoutWalletInput {
 input WalletTransactionCreateWithoutWalletInput {
   amount: Float!
   type: TransactionType!
+  transactionReference: String
   medium: PaymentMedium
   mediumName: String
   mediumNumber: String
@@ -1074,6 +1077,8 @@ enum WalletTransactionOrderByInput {
   amount_DESC
   type_ASC
   type_DESC
+  transactionReference_ASC
+  transactionReference_DESC
   medium_ASC
   medium_DESC
   mediumName_ASC
@@ -1100,6 +1105,7 @@ type WalletTransactionPreviousValues {
   id: ID!
   amount: Float!
   type: TransactionType!
+  transactionReference: String
   medium: PaymentMedium
   mediumName: String
   mediumNumber: String
@@ -1139,6 +1145,20 @@ input WalletTransactionScalarWhereInput {
   type_not: TransactionType
   type_in: [TransactionType!]
   type_not_in: [TransactionType!]
+  transactionReference: String
+  transactionReference_not: String
+  transactionReference_in: [String!]
+  transactionReference_not_in: [String!]
+  transactionReference_lt: String
+  transactionReference_lte: String
+  transactionReference_gt: String
+  transactionReference_gte: String
+  transactionReference_contains: String
+  transactionReference_not_contains: String
+  transactionReference_starts_with: String
+  transactionReference_not_starts_with: String
+  transactionReference_ends_with: String
+  transactionReference_not_ends_with: String
   medium: PaymentMedium
   medium_not: PaymentMedium
   medium_in: [PaymentMedium!]
@@ -1253,6 +1273,7 @@ input WalletTransactionSubscriptionWhereInput {
 input WalletTransactionUpdateInput {
   amount: Float
   type: TransactionType
+  transactionReference: String
   medium: PaymentMedium
   mediumName: String
   mediumNumber: String
@@ -1267,6 +1288,7 @@ input WalletTransactionUpdateInput {
 input WalletTransactionUpdateManyDataInput {
   amount: Float
   type: TransactionType
+  transactionReference: String
   medium: PaymentMedium
   mediumName: String
   mediumNumber: String
@@ -1280,6 +1302,7 @@ input WalletTransactionUpdateManyDataInput {
 input WalletTransactionUpdateManyMutationInput {
   amount: Float
   type: TransactionType
+  transactionReference: String
   medium: PaymentMedium
   mediumName: String
   mediumNumber: String
@@ -1309,6 +1332,7 @@ input WalletTransactionUpdateManyWithWhereNestedInput {
 input WalletTransactionUpdateWithoutWalletDataInput {
   amount: Float
   type: TransactionType
+  transactionReference: String
   medium: PaymentMedium
   mediumName: String
   mediumNumber: String
@@ -1357,6 +1381,20 @@ input WalletTransactionWhereInput {
   type_not: TransactionType
   type_in: [TransactionType!]
   type_not_in: [TransactionType!]
+  transactionReference: String
+  transactionReference_not: String
+  transactionReference_in: [String!]
+  transactionReference_not_in: [String!]
+  transactionReference_lt: String
+  transactionReference_lte: String
+  transactionReference_gt: String
+  transactionReference_gte: String
+  transactionReference_contains: String
+  transactionReference_not_contains: String
+  transactionReference_starts_with: String
+  transactionReference_not_starts_with: String
+  transactionReference_ends_with: String
+  transactionReference_not_ends_with: String
   medium: PaymentMedium
   medium_not: PaymentMedium
   medium_in: [PaymentMedium!]
@@ -1453,6 +1491,7 @@ input WalletTransactionWhereInput {
 
 input WalletTransactionWhereUniqueInput {
   id: ID
+  transactionReference: String
 }
 
 input WalletUpdateInput {

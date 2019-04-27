@@ -60,6 +60,7 @@ type WalletTransaction {
   id: ID! @unique @id
   amount: Float!
   type: TransactionType!
+  transactionReference: String @unique
   medium: PaymentMedium
   mediumName: String
   mediumNumber: String

@@ -44,7 +44,9 @@ type WalletTransactionData {
   transactionReference: String
   total: Float
   fee: Float
+  type: TransactionType
   medium: PaymentMedium
+  description: String
   mediumName: String
   mediumNumber: String
   status: String

@@ -2,6 +2,7 @@ import {
   fundWallet,
   getTransactionDetails,
   initateTransaction,
+  transactionHistory,
   walletToBankTransfer,
   walletToWalletTransfer
 } from "../helpers/wallet.helper";
@@ -16,6 +17,14 @@ export default {
       }
 
       return await getTransactionDetails(token, args.transactionReference);
+    },
+    walletTransactionHistory: async (parent, args, ctx, info) => {
+      const token = getToken(ctx);
+      if (!token) {
+        throw new Error("Not Authenticated");
+      }
+
+      return await transactionHistory(token);
     }
   },
   Mutation: {

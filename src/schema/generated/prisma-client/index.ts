@@ -326,6 +326,8 @@ export type WalletTransactionOrderByInput =
   | "amount_DESC"
   | "type_ASC"
   | "type_DESC"
+  | "transactionReference_ASC"
+  | "transactionReference_DESC"
   | "medium_ASC"
   | "medium_DESC"
   | "mediumName_ASC"
@@ -487,6 +489,20 @@ export interface WalletTransactionScalarWhereInput {
   type_not?: TransactionType;
   type_in?: TransactionType[] | TransactionType;
   type_not_in?: TransactionType[] | TransactionType;
+  transactionReference?: String;
+  transactionReference_not?: String;
+  transactionReference_in?: String[] | String;
+  transactionReference_not_in?: String[] | String;
+  transactionReference_lt?: String;
+  transactionReference_lte?: String;
+  transactionReference_gt?: String;
+  transactionReference_gte?: String;
+  transactionReference_contains?: String;
+  transactionReference_not_contains?: String;
+  transactionReference_starts_with?: String;
+  transactionReference_not_starts_with?: String;
+  transactionReference_ends_with?: String;
+  transactionReference_not_ends_with?: String;
   medium?: PaymentMedium;
   medium_not?: PaymentMedium;
   medium_in?: PaymentMedium[] | PaymentMedium;
@@ -834,6 +850,7 @@ export interface UserSubscriptionWhereInput {
 export interface WalletTransactionCreateWithoutWalletInput {
   amount: Float;
   type: TransactionType;
+  transactionReference?: String;
   medium?: PaymentMedium;
   mediumName?: String;
   mediumNumber?: String;
@@ -847,6 +864,7 @@ export interface WalletTransactionCreateWithoutWalletInput {
 export interface WalletTransactionUpdateManyMutationInput {
   amount?: Float;
   type?: TransactionType;
+  transactionReference?: String;
   medium?: PaymentMedium;
   mediumName?: String;
   mediumNumber?: String;
@@ -919,6 +937,7 @@ export interface VerificationCodeUpdateOneWithoutUserInput {
 export interface WalletTransactionCreateInput {
   amount: Float;
   type: TransactionType;
+  transactionReference?: String;
   medium?: PaymentMedium;
   mediumName?: String;
   mediumNumber?: String;
@@ -1046,6 +1065,7 @@ export interface VerificationCodeUpdateManyMutationInput {
 export interface WalletTransactionUpdateWithoutWalletDataInput {
   amount?: Float;
   type?: TransactionType;
+  transactionReference?: String;
   medium?: PaymentMedium;
   mediumName?: String;
   mediumNumber?: String;
@@ -1112,6 +1132,20 @@ export interface WalletTransactionWhereInput {
   type_not?: TransactionType;
   type_in?: TransactionType[] | TransactionType;
   type_not_in?: TransactionType[] | TransactionType;
+  transactionReference?: String;
+  transactionReference_not?: String;
+  transactionReference_in?: String[] | String;
+  transactionReference_not_in?: String[] | String;
+  transactionReference_lt?: String;
+  transactionReference_lte?: String;
+  transactionReference_gt?: String;
+  transactionReference_gte?: String;
+  transactionReference_contains?: String;
+  transactionReference_not_contains?: String;
+  transactionReference_starts_with?: String;
+  transactionReference_not_starts_with?: String;
+  transactionReference_ends_with?: String;
+  transactionReference_not_ends_with?: String;
   medium?: PaymentMedium;
   medium_not?: PaymentMedium;
   medium_in?: PaymentMedium[] | PaymentMedium;
@@ -1286,6 +1320,7 @@ export interface VerificationCodeWhereInput {
 export interface WalletTransactionUpdateManyDataInput {
   amount?: Float;
   type?: TransactionType;
+  transactionReference?: String;
   medium?: PaymentMedium;
   mediumName?: String;
   mediumNumber?: String;
@@ -1379,6 +1414,7 @@ export interface UserCreateWithoutVerificationCodeInput {
 
 export type WalletTransactionWhereUniqueInput = AtLeastOne<{
   id: ID_Input;
+  transactionReference?: String;
 }>;
 
 export interface UserCreateInput {
@@ -1576,6 +1612,7 @@ export interface UserUpdateOneRequiredWithoutWalletInput {
 export interface WalletTransactionUpdateInput {
   amount?: Float;
   type?: TransactionType;
+  transactionReference?: String;
   medium?: PaymentMedium;
   mediumName?: String;
   mediumNumber?: String;
@@ -1595,6 +1632,7 @@ export interface WalletTransactionPreviousValues {
   id: ID_Output;
   amount: Float;
   type: TransactionType;
+  transactionReference?: String;
   medium?: PaymentMedium;
   mediumName?: String;
   mediumNumber?: String;
@@ -1613,6 +1651,7 @@ export interface WalletTransactionPreviousValuesPromise
   id: () => Promise<ID_Output>;
   amount: () => Promise<Float>;
   type: () => Promise<TransactionType>;
+  transactionReference: () => Promise<String>;
   medium: () => Promise<PaymentMedium>;
   mediumName: () => Promise<String>;
   mediumNumber: () => Promise<String>;
@@ -1631,6 +1670,7 @@ export interface WalletTransactionPreviousValuesSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   amount: () => Promise<AsyncIterator<Float>>;
   type: () => Promise<AsyncIterator<TransactionType>>;
+  transactionReference: () => Promise<AsyncIterator<String>>;
   medium: () => Promise<AsyncIterator<PaymentMedium>>;
   mediumName: () => Promise<AsyncIterator<String>>;
   mediumNumber: () => Promise<AsyncIterator<String>>;
@@ -2144,6 +2184,7 @@ export interface WalletTransaction {
   id: ID_Output;
   amount: Float;
   type: TransactionType;
+  transactionReference?: String;
   medium?: PaymentMedium;
   mediumName?: String;
   mediumNumber?: String;
@@ -2162,6 +2203,7 @@ export interface WalletTransactionPromise
   id: () => Promise<ID_Output>;
   amount: () => Promise<Float>;
   type: () => Promise<TransactionType>;
+  transactionReference: () => Promise<String>;
   medium: () => Promise<PaymentMedium>;
   mediumName: () => Promise<String>;
   mediumNumber: () => Promise<String>;
@@ -2181,6 +2223,7 @@ export interface WalletTransactionSubscription
   id: () => Promise<AsyncIterator<ID_Output>>;
   amount: () => Promise<AsyncIterator<Float>>;
   type: () => Promise<AsyncIterator<TransactionType>>;
+  transactionReference: () => Promise<AsyncIterator<String>>;
   medium: () => Promise<AsyncIterator<PaymentMedium>>;
   mediumName: () => Promise<AsyncIterator<String>>;
   mediumNumber: () => Promise<AsyncIterator<String>>;
