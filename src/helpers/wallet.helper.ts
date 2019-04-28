@@ -278,7 +278,7 @@ export async function walletToBankTransfer(
         transferResponse.responseCode === "90000" &&
         transferResponse.transferCode === transferCode
       ) {
-        await createWalletTransaction(
+        const transaction = await createWalletTransaction(
           wallet[0].id,
           amount,
           `${amount} transferred to bank account: ${accountName} `,
@@ -299,7 +299,7 @@ export async function walletToBankTransfer(
         });
         return {
           amount: amount,
-          transactionReference: transferCode,
+          transactionReference: transaction.transactionReference,
           total: amount + fee,
           fee: fee,
           type: `Debit`,
@@ -448,7 +448,7 @@ export async function fundWallet(token: string, transactionReference: string) {
               }
             },
             medium: "Card",
-            description: `Funded wallet through bank account : ${
+            description: `Funded wallet through debit card : ${
               response.body.data.card.type
             } CARD`,
             mediumNumber: response.body.data.card.last4digits,
@@ -484,7 +484,7 @@ export async function fundWallet(token: string, transactionReference: string) {
           transactionReference: transactionReference,
           total: response.body.data.amount + fee,
           fee: fee,
-          description: `Funded wallet through bank account : ${
+          description: `Funded wallet through debit card : ${
             response.body.data.card.type
           } CARD`,
           medium: "Card",
